@@ -1,5 +1,7 @@
 from gdacs.api import GDACSAPIReader
 from flask import Flask,json,render_template
+import plotly.graph_objects as go
+from collections import Counter
 import webbrowser
 
 app = Flask(__name__)
@@ -13,7 +15,8 @@ def info():
             'alert_level' : [],'alert_color' : [],
             'from_date' : [],'time' : [],'severity_text' : [],
             'icon' : [],'legend_icon_names' : [],'legend_icon_pics' : []}
-    
+    disaster_count = {}
+    disaster_count_pie_chart = {}
     for feature in geojson_obj.features:
         print('type = ',feature['type'])
         geometry = feature['geometry']
@@ -96,28 +99,59 @@ def info():
         data['severity_text'].append(severitydata['severitytext'])
         print('severity unit = ',severitydata['severityunit'])
         print('\n\n')
-        
+    disaster_count = Counter(data['legend_icon_names'])
     data['legend_icon_names'] = list(set(data['legend_icon_names']))
     baselink = "https://www.gdacs.org/images/gdacs_icons/maps/"
     for i in range(len(data['legend_icon_names'])):
         if data['legend_icon_names'][i] == 'Flood':
             data['legend_icon_pics'].append(baselink + alert_level + "/FL.png")
+
         elif data['legend_icon_names'][i] == 'Earthquake':
             data['legend_icon_pics'].append(baselink + alert_level + "/EQ.png")
+
         elif data['legend_icon_names'][i] == 'Forest':
             data['legend_icon_pics'].append(baselink + alert_level + "/WF.png")
             data['legend_icon_names'][i] += ' fires'
+        
         elif data['legend_icon_names'][i] == 'Tropical':
             data['legend_icon_pics'].append(baselink + alert_level + "/TC.png")
             data['legend_icon_names'][i] += ' Cyclone';
+        
         elif data['legend_icon_names'][i] == 'Tsunami':
             data['legend_icon_pics'].append(baselink + alert_level + "/TS.png")
+
         elif data['legend_icon_names'][i] == 'Drought':
             data['legend_icon_pics'].append(baselink + alert_level + "/DR.png")
+
         else:
+            data['legend_icon_names'][i] = 'Volcano ' + data['legend_icon_names'][i]
             data['legend_icon_pics'].append(baselink + alert_level + "/VO.png")
-    event = client.get_event(event_type='WF', event_id='1019383',episode_id = "3")
-    print(event)
+    #event = client.get_event(event_type='WF', event_id='1019383',episode_id = "3")
+    #print(event)
+    disaster_count_pie_chart['Earthquakes'] = disaster_count['Earthquake']
+    disaster_count_pie_chart['Floods'] = disaster_count['Flood']
+    disaster_count_pie_chart['Forest Fires'] = disaster_count['Forest']
+    disaster_count_pie_chart['Tropical Cyclones'] = disaster_count['Tropical']
+    disaster_count_pie_chart['Tsunamis'] = disaster_count['Tsunami']
+    disaster_count_pie_chart['Droughts'] = disaster_count['Drought']
+    disaster_count_pie_chart['Volcanic Eruptions'] = disaster_count['Eruption']
+
+    #plotting of pie chart
+    pie_chart_colors = ['brown','blue','darkred','grey','darkblue','lightbrown','yellow']
+    pie_figure = go.Figure(
+        data = [
+            go.Pie(
+                labels = list(disaster_count_pie_chart.keys()),
+                values = list(disaster_count_pie_chart.values()),
+                textinfo = "label + percent",
+                insidetextorientation = 'radial',
+                textfont_size = 20,
+                marker=dict(colors=pie_chart_colors)
+            )
+        ]
+    )
+    pie_figure.write_html('templates/pie_chart.html',auto_open = True)
+    print(disaster_count_pie_chart)
     return render_template('map.html',data = data)
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)
