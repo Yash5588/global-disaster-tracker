@@ -6,15 +6,16 @@ import webbrowser
 
 app = Flask(__name__)
 
-@app.route('/')
-def info():
-    client = GDACSAPIReader()
-    geojson_obj = client.latest_events()
-    data = {'latitude' : [],'longitude' : [],'country_names' : [],
+data = {'latitude' : [],'longitude' : [],'country_names' : [],
             'disaster_names' : [],'exact_description' : [],
             'alert_level' : [],'alert_color' : [],
             'from_date' : [],'time' : [],'severity_text' : [],
             'icon' : [],'legend_icon_names' : [],'legend_icon_pics' : []}
+
+@app.route('/')
+def info():
+    client = GDACSAPIReader()
+    geojson_obj = client.latest_events()
     disaster_count = {}
     disaster_count_pie_chart = {}
     for feature in geojson_obj.features:
@@ -150,8 +151,20 @@ def info():
             )
         ]
     )
-    pie_figure.write_html('templates/pie_chart.html',auto_open = True)
-    print(disaster_count_pie_chart)
+    pie_figure.write_html('templates/pie_chart.html')
+    return render_template('home_page.html')
+
+@app.route('/map')
+def map():
     return render_template('map.html',data = data)
+
+@app.route('/pie')
+def pie():
+    return render_template('pie_chart.html')
+
+@app.route('/home_page')
+def home_page():
+    return render_template('home_page.html')
+    
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)
