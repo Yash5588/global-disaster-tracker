@@ -1,6 +1,7 @@
 from gdacs.api import GDACSAPIReader
 from flask import Flask,json,render_template
 import plotly.graph_objects as go
+import plotly.express as px
 from collections import Counter
 import webbrowser
 
@@ -151,7 +152,19 @@ def info():
             )
         ]
     )
+   
+    bar_trace = go.Bar(x = list(disaster_count_pie_chart.keys()),y = list(disaster_count_pie_chart.values()),
+                                   marker_color = 'rgb(55, 83, 109)')
+    layout = go.Layout(
+        title = "Graph for Disasters Occuring currently",
+        xaxis = dict(title = "Disasters"),
+        yaxis = dict(title = "Count")
+    )
+
+    bar_figure = go.Figure(data = [bar_trace],layout=layout)
+
     pie_figure.write_html('templates/pie_chart.html')
+    bar_figure.write_html('templates/bar_graph.html')
     return render_template('home_page.html')
 
 @app.route('/map')
@@ -162,9 +175,14 @@ def map():
 def pie():
     return render_template('pie_chart.html')
 
+@app.route('/bar')
+def bar():
+    return render_template('bar_graph.html')
+
 @app.route('/home_page')
 def home_page():
     return render_template('home_page.html')
+
     
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)
