@@ -74,15 +74,15 @@ def info():
 
         if 'Green' in alert_level:
             data['alert_color'].append('bg-success')
-            disaster_alert_count[data['legend_icon_names']]['green'] += 1
+            disaster_alert_count[description[0]]['green'] += 1
 
         elif 'Orange' in alert_level:
             data['alert_color'].append('bg-warning')
-            disaster_alert_count[data['legend_icon_names']]['orange'] += 1
+            disaster_alert_count[description[0]]['orange'] += 1
         
         else:
             data['alert_color'].append('bg-danger')
-            disaster_alert_count[data['legend_icon_names']]['red'] += 1
+            disaster_alert_count[description[0]]['red'] += 1
         
         print('alert score = ',properties['alertscore'])
         print('episode alert level = ',properties['episodealertlevel'])
@@ -122,7 +122,6 @@ def info():
         print('severity unit = ',severitydata['severityunit'])
         print('\n\n')
     
-    print(disaster_alert_count)
     
     disaster_count = Counter(data['legend_icon_names'])
     data['legend_icon_names'] = list(set(data['legend_icon_names']))
@@ -175,16 +174,50 @@ def info():
             )
         ]
     )
+
+    #separating disasters based on their alert level for graph plotting
+    green_disasters,orange_disasters,red_disasters = [],[],[]
+
+    for disaster_color in disaster_alert_count.values():
+        green_disasters.append(disaster_color['green'])
+        orange_disasters.append(disaster_color['orange'])
+        red_disasters.append(disaster_color['red'])
+
+    print(disaster_count_pie_chart)
+    print(disaster_alert_count)
+    print(green_disasters,red_disasters,orange_disasters)
    
-    bar_trace = go.Bar(x = list(disaster_count_pie_chart.keys()),y = list(disaster_count_pie_chart.values()),
-                                   marker_color = 'rgb(55, 83, 109)')
+   #creating different traces of graphs individually for red,orange and green alerts
+    green_bar_trace = go.Bar(name = 'green alert level',
+                             x = list(disaster_count_pie_chart.keys()),
+                             y = green_disasters,
+                             text = green_disasters,
+                             marker_color = 'green',
+                             textposition = 'auto')
+    
+    orange_bar_trace = go.Bar(name = 'orange alert level',
+                              x = list(disaster_count_pie_chart.keys()),
+                              y = orange_disasters,
+                              text = orange_disasters,
+                              marker_color = 'darkorange',
+                              textposition = "auto")
+    
+    red_bar_trace = go.Bar(name = 'red alert level',
+                           x = list(disaster_count_pie_chart.keys()),
+                           y = red_disasters,
+                           text = red_disasters,
+                           marker_color = 'red',
+                           textposition = 'auto')
+    #crearing layout mainly for x and y axis titles
     layout = go.Layout(
         title = "Graph for Disasters Occuring currently",
         xaxis = dict(title = "Disasters"),
         yaxis = dict(title = "Count")
     )
-
-    bar_figure = go.Figure(data = [bar_trace],layout=layout)
+    
+    #plotting of bar graph and pie chart bar graph is of stack type
+    bar_figure = go.Figure(data = [green_bar_trace,orange_bar_trace,red_bar_trace],layout=layout)
+    bar_figure.update_layout(barmode = 'stack')
 
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
