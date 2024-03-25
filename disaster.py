@@ -1,4 +1,5 @@
 from gdacs.api import GDACSAPIReader
+from gdacs.api import GDACSAPIError
 from flask import Flask,json,render_template
 import plotly.graph_objects as go
 import plotly.express as px
@@ -15,9 +16,23 @@ data = {'latitude' : [],'longitude' : [],'country_names' : [],
 
 @app.route('/')
 def info():
-    client = GDACSAPIReader()
-    geojson_obj = client.latest_events()
+    try:
+        client = GDACSAPIReader()
+        geojson_obj = client.latest_events()
+    except GDACSAPIError as error:
+        return render_template('error.html',error = error)
+
     disaster_count = {}
+    
+    disaster_alert_count = {'Earthquake' : {'green' : 0,'orange' : 0,'red' : 0},
+                            'Flood' : {'green' : 0,'orange' : 0,'red' : 0},
+                            'Forest' : {'green' : 0,'orange' : 0,'red' : 0},
+                            'Tropical' : {'green' : 0,'orange' : 0,'red' : 0},
+                            'Tsunami' : {'green' : 0,'orange' : 0,'red' : 0},
+                            'Drought' : {'green' : 0,'orange' : 0,'red' : 0},
+                            'Eruption' : {'green' : 0,'orange' : 0,'red' : 0}
+                            }
+    
     disaster_count_pie_chart = {}
     for feature in geojson_obj.features:
         print('type = ',feature['type'])
@@ -59,10 +74,15 @@ def info():
 
         if 'Green' in alert_level:
             data['alert_color'].append('bg-success')
+            disaster_alert_count[data['legend_icon_names']]['green'] += 1
+
         elif 'Orange' in alert_level:
             data['alert_color'].append('bg-warning')
+            disaster_alert_count[data['legend_icon_names']]['orange'] += 1
+        
         else:
             data['alert_color'].append('bg-danger')
+            disaster_alert_count[data['legend_icon_names']]['red'] += 1
         
         print('alert score = ',properties['alertscore'])
         print('episode alert level = ',properties['episodealertlevel'])
@@ -101,6 +121,9 @@ def info():
         data['severity_text'].append(severitydata['severitytext'])
         print('severity unit = ',severitydata['severityunit'])
         print('\n\n')
+    
+    print(disaster_alert_count)
+    
     disaster_count = Counter(data['legend_icon_names'])
     data['legend_icon_names'] = list(set(data['legend_icon_names']))
     baselink = "https://www.gdacs.org/images/gdacs_icons/maps/"
