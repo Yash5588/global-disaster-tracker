@@ -27,6 +27,9 @@
         #legend h5{
             display: inline;
         }
+        .info_content{
+            text-align: center;
+        }
         body {
             background-color: #f8f9fa;
             font-family: Arial, sans-serif;
@@ -142,6 +145,7 @@ function initMap() {
     var alert_color = flaskData.alert_color;
     var legend_icon_names = flaskData.legend_icon_names;
     var legend_icon_pics = flaskData.legend_icon_pics;
+    
     // Multiple markers location, latitude, and longitude
     var markers = []
     for(i = 0;i<latitude.length;i++)

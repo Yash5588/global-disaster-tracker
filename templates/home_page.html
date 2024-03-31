@@ -12,6 +12,23 @@
             font-family: Arial, sans-serif;
         }
 
+        .table{
+            border-collapse: collapse;
+            width : 100%;
+            margin-bottom: 100px;
+            margin-top: 10px;
+        }
+
+        .empty{
+            text-align: center;
+            margin-bottom: 100px;
+        }
+
+        .table_titles{
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
         .navbar {
             background-color: #343a40 !important; /* Dark background for navbar */
         }
@@ -63,10 +80,12 @@
             background-color: #343a40;
             color: white;
             text-align: center;
-            padding: 10px;
             position: fixed;
+            padding: 10px;
             bottom: 0;
             width: 100%;
+            margin-top: 10px;
+
         }
     </style>
 </head>
@@ -84,7 +103,7 @@
             <div class="collapse navbar-collapse ms-auto" id="navbarNavDropdown">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="{{url_for('home_page')}}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{url_for('map')}}">Current Disaster Locations</a>
@@ -110,9 +129,285 @@
         </div>
     </nav>
 
+    <div id = earthquake>
+        <h1 class = 'table_titles'>Earthquakes</h1>
+        <table border = '1' class = 'table' id = 'earthquake_table'>
+            <thead>
+                <tr>
+                    <th rowspan="2">Country</th>
+                    <th colspan="2">Coordinates</th>
+                    <th rowspan="2">Alert level</th>
+                    <th rowspan="2">Started Date</th>
+                    <th rowspan="2">Time</th>
+                    <th rowspan="2">Severity</th>
+                </tr>
+                <tr>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                </tr>
+            </thead>
+            <tbody id = 'earthquake_body'>
+                <!-- in this table we are adding rows dynamically -->
+            </tbody>
+        </table>
+        <h3 id = 'earthquake_empty' class = 'empty'></h3>
+    </div>
+
+    <div id = 'flood'>
+        <h1 class = 'table_titles' >Floods</h1>
+        <table border = '1' class = 'table' id = 'flood_table'>
+            <thead>
+                <tr>
+                    <th rowspan="2">Country</th>
+                    <th colspan="2">Coordinates</th>
+                    <th rowspan="2">Alert level</th>
+                    <th rowspan="2">Started Date</th>
+                    <th rowspan="2">Time</th>
+                    <th rowspan="2">Severity</th>
+                </tr>
+                <tr>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                </tr>
+            </thead>
+            <tbody id = 'flood_body'>
+                <!-- in this table we are adding rows dynamically -->
+            </tbody>
+        </table>
+        <h3 id = 'flood_empty' class = 'empty'></h3>
+    </div>
+
+    <div id = 'tropical'>
+        <h1 class = 'table_titles'>Tropical Cyclones</h1>
+        <table border = '1' class="table" id = 'tropical_table'>
+            <thead>
+                <tr>
+                    <th rowspan="2">Country</th>
+                    <th colspan="2">Coordinates</th>
+                    <th rowspan="2">Alert level</th>
+                    <th rowspan="2">Started Date</th>
+                    <th rowspan="2">Time</th>
+                    <th rowspan="2">Severity</th>
+                </tr>
+                <tr>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                </tr>
+            </thead>
+            <tbody id = 'tropical_body'>
+                <!-- in this table we are adding rows dynamically -->
+            </tbody>
+        </table>
+        <h3 id = 'tropical_empty' class = 'empty'></h3>
+    </div>
+
+    <div id = 'forest'>
+        <h1 class = 'table_titles'>Forest Fires</h1>
+        <table border = '1' class="table" id = 'forest_table'>
+            <thead>
+                <tr>
+                    <th rowspan="2">Country</th>
+                    <th colspan="2">Coordinates</th>
+                    <th rowspan="2">Alert level</th>
+                    <th rowspan="2">Started Date</th>
+                    <th rowspan="2">Time</th>
+                    <th rowspan="2">Severity</th>
+                </tr>
+                <tr>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                </tr>
+            </thead>
+            <tbody id = 'forest_body'>
+                <!-- in this table we are adding rows dynamically -->
+            </tbody>
+        </table>
+        <h3 id = 'forest_empty' class = 'empty'></h3>
+    </div>
+
+    <div id = 'eruption'>
+        <h1 class = 'table_titles'>Volcano Eruptions</h1>
+        <table border = '1' class="table" id = 'eruption_table'>
+            <thead>
+                <tr>
+                    <th rowspan="2">Country</th>
+                    <th colspan="2">Coordinates</th>
+                    <th rowspan="2">Alert level</th>
+                    <th rowspan="2">Started Date</th>
+                    <th rowspan="2">Time</th>
+                    <th rowspan="2">Severity</th>
+                </tr>
+                <tr>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                </tr>
+            </thead>
+            <tbody id = 'eruption_body'>
+                <!-- in this table we are adding rows dynamically -->
+            </tbody>
+        </table>
+        <h3 id = 'eruption_empty' class = 'empty'></h3>
+    </div>
+
+    <div id = 'tsunami'>
+        <h1 class = 'table_titles'>Tsunami</h1>
+        <table border = '1' class="table" id = 'tsunami_table'>
+            <thead>
+                <tr>
+                    <th rowspan="2">Country</th>
+                    <th colspan="2">Coordinates</th>
+                    <th rowspan="2">Alert level</th>
+                    <th rowspan="2">Started Date</th>
+                    <th rowspan="2">Time</th>
+                    <th rowspan="2">Severity</th>
+                </tr>
+                <tr>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                </tr>
+            </thead>
+            <tbody id = 'tsunami_body'>
+                <!-- in this table we are adding rows dynamically -->
+            </tbody>
+        </table>
+        <h3 id = 'tsunami_empty' class = 'empty'></h3>
+    </div>
+
+    <div id = 'drought'>
+        <h1 class = table_titles>Droughts</h1>
+        <table border = '1' class = 'table' id = 'drought_table'>
+            <thead>
+                <tr>
+                    <th rowspan="2">Country</th>
+                    <th colspan="2">Coordinates</th>
+                    <th rowspan="2">Alert level</th>
+                    <th rowspan="2">Started Date</th>
+                    <th rowspan="2">Time</th>
+                    <th rowspan="2">Severity</th>
+                </tr>
+                <tr>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                </tr>
+            </thead>
+            <tbody id = 'drought_body'>
+                <!-- in this table we are adding rows dynamically -->
+            </tbody>
+        <h3 id = 'drought_empty' class = 'empty'></h3>
+    </div>
+
     <footer>
         <p>&copy; 2024 Global Disaster Tracker</p>
     </footer>
+
+    <script>
+        var flaskData = JSON.parse('{{data|tojson|safe}}');
+        var latitude = flaskData.latitude;
+        var longitude = flaskData.longitude;
+        var country_names = flaskData.country_names;
+        var disaster_names = flaskData.disaster_names;
+        var exact_description = flaskData.exact_description;
+        var alert_level = flaskData.alert_level;
+        var from_date = flaskData.from_date;
+        var time = flaskData.time;
+        var severity_text = flaskData.severity_text;
+        var icon = flaskData.icon;
+        var alert_color = flaskData.alert_color;
+        var legend_icon_names = flaskData.legend_icon_names;
+        var legend_icon_pics = flaskData.legend_icon_pics;
+        var disaster_type = flaskData.disaster_type;
+
+        var earthquake = document.getElementById('earthquake_body');
+        var flood = document.getElementById('flood_body');
+        var drought = document.getElementById('drought_body');
+        var tropical = document.getElementById('tropical_body');
+        var forest = document.getElementById('forest_body');
+        var eruption = document.getElementById('eruption_body');
+        var tsunami = document.getElementById('tsunami_body');
+
+        let earthquake_flag = false;
+        let flood_flag = false;
+        let drought_flag = false;
+        let tropical_flag = false;
+        let forest_flag = false;
+        let eruption_flag = false;
+        let tsunami_flag = false;
+
+        for(i=0;i<latitude.length;i++)
+        {
+            let table_row = '<tr>' + 
+                '<td>' + country_names[i] + '</td>' + 
+                '<td>' + latitude[i] + '</td>' + 
+                '<td>' + longitude[i] + '</td>' +
+                '<td>' + alert_level[i] + '</td>' + 
+                '<td>' + from_date[i] + '</td>' + 
+                '<td>' + time[i] + '</td>'+ 
+                '<td>' + severity_text[i] + '</td>'+
+            '</tr>';
+
+            if(disaster_type[i] == 'Earthquake'){
+                earthquake.innerHTML += table_row;
+                earthquake_flag = true;
+            }
+            else if(disaster_type[i] == 'Flood'){
+                flood.innerHTML += table_row;
+                flood_flag = true;
+            }
+            else if(disaster_type[i] == 'Drought'){
+                drought.innerHTML += table_row;
+                drought_flag = true;
+            }
+            else if(disaster_type[i] == 'Tropical'){
+                tropical.innerHTML += table_row;
+                tropical_flag = true;
+            }
+            else if(disaster_type[i] == 'Forest'){
+                forest.innerHTML += table_row;
+                forest_flag = true;
+            }
+            else if(disaster_type[i] == 'Eruption'){
+                eruption.innerHTML += table_row;
+                eruption_flag = true;
+            }
+            else if(disaster_type[i] == 'Tsunami'){
+                tsunami.innerHTML += table_row;
+                tsunami_flag = true;
+            }
+        }
+        
+
+        if(!earthquake_flag){
+            document.getElementById('earthquake_table').style.display = 'none';
+            document.getElementById('earthquake_empty').innerHTML = "There Are No Earthquakes Currently Across The World";
+        }
+        if(!flood_flag){
+            document.getElementById('flood_table').style.display = 'none';
+            document.getElementById('flood_empty').innerHTML = "There Are No Floods Currently Across The World";
+        }
+        if(!drought_flag){
+            document.getElementById('drought_table').style.display = 'none';
+            document.getElementById('drought_empty').innerHTML = "There Are No Droughts Currently Across The World";
+        }
+        if(!tropical_flag){
+            document.getElementById('tropical_table').style.display = 'none';
+            document.getElementById('tropical_empty').innerHTML = "There Are No Tropical Cyclones Currently Across Across The World";
+        }
+        if(!forest_flag){
+            document.getElementById('forest_table').style.display = 'none';
+            document.getElementById('forest_empty').innerHTML = "There Are No Forest Fires Currently Across The World";
+        }
+        if(!eruption_flag){
+            document.getElementById('eruption_table').style.display = 'none';
+            document.getElementById('eruption_empty').innerHTML = "There Are No Volcanic Eruptions Currently Across The World";
+        }
+        if(!tsunami_flag){
+            document.getElementById('tsunami_table').style.display = 'none';
+            document.getElementById('tsunami_empty').innerHTML = "There Are No Tsunamis Currently Across The World";
+        }
+
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

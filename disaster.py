@@ -9,6 +9,7 @@ import webbrowser
 app = Flask(__name__)
 
 data = {'latitude' : [],'longitude' : [],'country_names' : [],
+            'disaster_type' : [],
             'disaster_names' : [],'exact_description' : [],
             'alert_level' : [],'alert_color' : [],
             'from_date' : [],'time' : [],'severity_text' : [],
@@ -51,8 +52,8 @@ def info():
         
         print('description = ',properties['description'])
         description = properties['description']
-        description = description.split()
-        data['legend_icon_names'].append(description[0])
+        description = description.split(' ')
+        data['legend_icon_names'].append(description[0].split(' ')[0])
 
 
         print('exact description = ',properties['htmldescription'])
@@ -124,6 +125,7 @@ def info():
     
     
     disaster_count = Counter(data['legend_icon_names'])
+    data['disaster_type'] = data['legend_icon_names']
     data['legend_icon_names'] = list(set(data['legend_icon_names']))
     baselink = "https://www.gdacs.org/images/gdacs_icons/maps/"
     for i in range(len(data['legend_icon_names'])):
@@ -139,7 +141,7 @@ def info():
         
         elif data['legend_icon_names'][i] == 'Tropical':
             data['legend_icon_pics'].append(baselink + alert_level + "/TC.png")
-            data['legend_icon_names'][i] += ' Cyclone';
+            data['legend_icon_names'][i] += ' Cyclone'
         
         elif data['legend_icon_names'][i] == 'Tsunami':
             data['legend_icon_pics'].append(baselink + alert_level + "/TS.png")
@@ -221,7 +223,8 @@ def info():
 
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
-    return render_template('home_page.html')
+    print(data['disaster_type'])
+    return render_template('home_page.html',data = data)
 
 @app.route('/map')
 def map():
@@ -237,7 +240,7 @@ def bar():
 
 @app.route('/home_page')
 def home_page():
-    return render_template('home_page.html')
+    return render_template('home_page.html',data = data)
 
     
 webbrowser.open('http://127.0.0.1:5000')
