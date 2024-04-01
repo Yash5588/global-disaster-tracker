@@ -19,12 +19,18 @@
             margin-top: 10px;
         }
 
+        th,td{
+            text-align: center;
+        }
+
+
         .empty{
             text-align: center;
             margin-bottom: 100px;
         }
 
         .table_titles{
+            margin-top: 40px;
             text-align: center;
             font-family: Arial, sans-serif;
         }
@@ -130,11 +136,12 @@
     </nav>
 
     <div id = earthquake>
-        <h1 class = 'table_titles'>Earthquakes</h1>
+        <h1 class = 'table_titles'>Earthquakes <img src="https://www.gdacs.org/images/gdacs_icons/maps/Green/EQ.png" alt="icon not found"></h1>
         <table border = '1' class = 'table' id = 'earthquake_table'>
             <thead>
                 <tr>
-                    <th rowspan="2">Country</th>
+                    <th rowspan='2'>DNO</th>
+                    <th rowspan="2">Country/Countries</th>
                     <th colspan="2">Coordinates</th>
                     <th rowspan="2">Alert level</th>
                     <th rowspan="2">Started Date</th>
@@ -154,11 +161,12 @@
     </div>
 
     <div id = 'flood'>
-        <h1 class = 'table_titles' >Floods</h1>
+        <h1 class = 'table_titles'>Floods <img src="https://www.gdacs.org/images/gdacs_icons/maps/Green/FL.png" alt="icon not found"></h1>
         <table border = '1' class = 'table' id = 'flood_table'>
             <thead>
                 <tr>
-                    <th rowspan="2">Country</th>
+                    <th rowspan='2'>DNO</th>
+                    <th rowspan="2">Country/Countries</th>
                     <th colspan="2">Coordinates</th>
                     <th rowspan="2">Alert level</th>
                     <th rowspan="2">Started Date</th>
@@ -178,11 +186,12 @@
     </div>
 
     <div id = 'tropical'>
-        <h1 class = 'table_titles'>Tropical Cyclones</h1>
+        <h1 class = 'table_titles'>Tropical Cyclones <img src="https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png" alt="icon not found"></h1>
         <table border = '1' class="table" id = 'tropical_table'>
             <thead>
                 <tr>
-                    <th rowspan="2">Country</th>
+                    <th rowspan='2'>DNO</th>
+                    <th rowspan="2">Country/Countries</th>
                     <th colspan="2">Coordinates</th>
                     <th rowspan="2">Alert level</th>
                     <th rowspan="2">Started Date</th>
@@ -201,12 +210,38 @@
         <h3 id = 'tropical_empty' class = 'empty'></h3>
     </div>
 
+    <div id = 'drought'>
+        <h1 class = 'table_titles'>Droughts <img src="https://www.gdacs.org/images/gdacs_icons/maps/Green/DR.png" alt="icon not found"></h1>
+        <table border = '1' class="table" id = 'drought_table'>
+            <thead>
+                <tr>
+                    <th rowspan='2'>DNO</th>
+                    <th rowspan="2">Country/Countries</th>
+                    <th colspan="2">Coordinates</th>
+                    <th rowspan="2">Alert level</th>
+                    <th rowspan="2">Started Date</th>
+                    <th rowspan="2">Time</th>
+                    <th rowspan="2">Severity</th>
+                </tr>
+                <tr>
+                    <th>latitude</th>
+                    <th>longitude</th>
+                </tr>
+            </thead>
+            <tbody id = 'drought_body'>
+                <!-- in this table we are adding rows dynamically -->
+            </tbody>
+        </table>
+        <h3 id = 'drought_empty' class = 'empty'></h3>
+    </div>
+
     <div id = 'forest'>
-        <h1 class = 'table_titles'>Forest Fires</h1>
+        <h1 class = 'table_titles'>Forest Fires <img src="https://www.gdacs.org/images/gdacs_icons/maps/Green/WF.png" alt="icon not found"></h1>
         <table border = '1' class="table" id = 'forest_table'>
             <thead>
                 <tr>
-                    <th rowspan="2">Country</th>
+                    <th rowspan='2'>DNO</th>
+                    <th rowspan="2">Country/Countries</th>
                     <th colspan="2">Coordinates</th>
                     <th rowspan="2">Alert level</th>
                     <th rowspan="2">Started Date</th>
@@ -226,11 +261,12 @@
     </div>
 
     <div id = 'eruption'>
-        <h1 class = 'table_titles'>Volcano Eruptions</h1>
+        <h1 class = 'table_titles'>Volcano Eruptions <img src="https://www.gdacs.org/images/gdacs_icons/maps/Green/VO.png" alt="icon not found"></h1>
         <table border = '1' class="table" id = 'eruption_table'>
             <thead>
                 <tr>
-                    <th rowspan="2">Country</th>
+                    <th rowspan='2'>DNO</th>
+                    <th rowspan="2">Country/Countries</th>
                     <th colspan="2">Coordinates</th>
                     <th rowspan="2">Alert level</th>
                     <th rowspan="2">Started Date</th>
@@ -250,11 +286,12 @@
     </div>
 
     <div id = 'tsunami'>
-        <h1 class = 'table_titles'>Tsunami</h1>
+        <h1 class = 'table_titles'>Tsunamis <img src="https://www.gdacs.org/images/gdacs_icons/maps/Green/TS.png" alt="icon not found"></h1>
         <table border = '1' class="table" id = 'tsunami_table'>
             <thead>
                 <tr>
-                    <th rowspan="2">Country</th>
+                    <th rowspan='2'>DNO</th>
+                    <th rowspan="2">Country/Countries</th>
                     <th colspan="2">Coordinates</th>
                     <th rowspan="2">Alert level</th>
                     <th rowspan="2">Started Date</th>
@@ -271,29 +308,6 @@
             </tbody>
         </table>
         <h3 id = 'tsunami_empty' class = 'empty'></h3>
-    </div>
-
-    <div id = 'drought'>
-        <h1 class = table_titles>Droughts</h1>
-        <table border = '1' class = 'table' id = 'drought_table'>
-            <thead>
-                <tr>
-                    <th rowspan="2">Country</th>
-                    <th colspan="2">Coordinates</th>
-                    <th rowspan="2">Alert level</th>
-                    <th rowspan="2">Started Date</th>
-                    <th rowspan="2">Time</th>
-                    <th rowspan="2">Severity</th>
-                </tr>
-                <tr>
-                    <th>latitude</th>
-                    <th>longitude</th>
-                </tr>
-            </thead>
-            <tbody id = 'drought_body'>
-                <!-- in this table we are adding rows dynamically -->
-            </tbody>
-        <h3 id = 'drought_empty' class = 'empty'></h3>
     </div>
 
     <footer>
@@ -325,56 +339,52 @@
         var eruption = document.getElementById('eruption_body');
         var tsunami = document.getElementById('tsunami_body');
 
-        let earthquake_flag = false;
-        let flood_flag = false;
-        let drought_flag = false;
-        let tropical_flag = false;
-        let forest_flag = false;
-        let eruption_flag = false;
-        let tsunami_flag = false;
+        let earthquake_flag = 0;
+        let flood_flag = 0;
+        let drought_flag = 0;
+        let tropical_flag = 0;
+        let forest_flag = 0;
+        let eruption_flag = 0;
+        let tsunami_flag = 0;
 
         for(i=0;i<latitude.length;i++)
         {
-            let table_row = '<tr>' + 
+            let table_row =  
                 '<td>' + country_names[i] + '</td>' + 
                 '<td>' + latitude[i] + '</td>' + 
                 '<td>' + longitude[i] + '</td>' +
-                '<td>' + alert_level[i] + '</td>' + 
+                "<td class = 'alert_level'>" + alert_level[i] +"</td>" + 
                 '<td>' + from_date[i] + '</td>' + 
                 '<td>' + time[i] + '</td>'+ 
                 '<td>' + severity_text[i] + '</td>'+
             '</tr>';
 
             if(disaster_type[i] == 'Earthquake'){
-                earthquake.innerHTML += table_row;
-                earthquake_flag = true;
+                earthquake.innerHTML += '<tr>' + '<td>' + (++earthquake_flag) + '</td>' + table_row;
             }
             else if(disaster_type[i] == 'Flood'){
-                flood.innerHTML += table_row;
-                flood_flag = true;
+                flood.innerHTML += '<tr>' + '<td>' + (++flood_flag) + '</td>' + table_row;
             }
             else if(disaster_type[i] == 'Drought'){
-                drought.innerHTML += table_row;
-                drought_flag = true;
+                drought.innerHTML += '<tr>' + '<td>' + (++drought_flag) + '</td>' + table_row;
             }
             else if(disaster_type[i] == 'Tropical'){
-                tropical.innerHTML += table_row;
+                tropical.innerHTML += '<tr>' + '<td>' + (++tropical_flag) + '</td>' + table_row;
                 tropical_flag = true;
             }
             else if(disaster_type[i] == 'Forest'){
-                forest.innerHTML += table_row;
+                forest.innerHTML += '<tr>' + '<td>' + (++forest_flag) + '</td>' + table_row;
                 forest_flag = true;
             }
             else if(disaster_type[i] == 'Eruption'){
-                eruption.innerHTML += table_row;
+                eruption.innerHTML += '<tr>' + '<td>' + (++eruption_flag) + '</td>' + table_row;
                 eruption_flag = true;
             }
             else if(disaster_type[i] == 'Tsunami'){
-                tsunami.innerHTML += table_row;
+                tsunami.innerHTML += '<tr>' + '<td>' + (++tsunami_flag) + '</td>' + table_row;
                 tsunami_flag = true;
             }
         }
-        
 
         if(!earthquake_flag){
             document.getElementById('earthquake_table').style.display = 'none';
@@ -403,6 +413,13 @@
         if(!tsunami_flag){
             document.getElementById('tsunami_table').style.display = 'none';
             document.getElementById('tsunami_empty').innerHTML = "There Are No Tsunamis Currently Across The World";
+        }
+
+        var alert = document.getElementsByClassName('alert_level');
+        
+        for(let i=0;i<alert.length;i++){
+            console.log(alert[i]);
+            alert[i].style.color = alert[i].textContent;
         }
 
     </script>

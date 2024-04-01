@@ -60,9 +60,10 @@ def info():
         data['exact_description'].append(properties['htmldescription'])
         
         print('icon = ',properties['icon'])
-        data['icon'].append(properties['icon'])
         
         print('iconoverall = ',properties['iconoverall'])
+        data['icon'].append(properties['iconoverall'])
+        
         url = properties['url']
         print('url geometry = ',url['geometry'])
         print('report = ',url['report'])
@@ -223,7 +224,6 @@ def info():
 
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
-    print(data['disaster_type'])
     return render_template('home_page.html',data = data)
 
 @app.route('/map')
