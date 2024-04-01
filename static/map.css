@@ -1,0 +1,69 @@
+#mapCanvas{
+    width: 100%;
+    height: 500px;
+}
+h1{
+    text-align: center;
+    font-family: "Brush Script MT",cursive;
+}
+#legend{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: aliceblue;
+    padding : 10px;
+    margin : 10px;
+    border: solid black;
+}
+#legend h3{
+    margin-top: 0;
+}
+#legend h5{
+    display: inline;
+}
+.info_content{
+    text-align: center;
+}
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background-color: #343a40 !important; /* Dark background for navbar */
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link:hover {
+    color: #ffffff !important;
+}
+
+.dropdown-menu:hover {
+    background-color: #343a40;
+}
+
+.dropdown-item:hover {
+    color: #494545 !important; 
+}
+
+/* Additional custom styles */
+header {
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+nav {
+    background-color: #212529;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
