@@ -1,19 +1,20 @@
 from gdacs.api import GDACSAPIReader
 from gdacs.api import GDACSAPIError
-from flask import Flask,json,render_template
+from flask import Flask,json,render_template,request,jsonify,session
 import plotly.graph_objects as go
 import plotly.express as px
 from collections import Counter
 import webbrowser
 
-app = Flask(__name__)
+app = Flask(__name__,template_folder="templates")
 
 data = {'latitude' : [],'longitude' : [],'country_names' : [],
             'disaster_type' : [],'is_current' : [],
             'disaster_names' : [],'exact_description' : [],
             'alert_level' : [],'alert_color' : [],
             'from_date' : [],'time' : [],'severity_text' : [],
-            'icon' : [],'legend_icon_names' : [],'legend_icon_pics' : []}
+            'icon' : [],'legend_icon_names' : [],'legend_icon_pics' : [],
+            'event_type' : [],'event_id' : []}
 
 @app.route('/')
 def info():
@@ -63,6 +64,12 @@ def info():
         
         print('iconoverall = ',properties['iconoverall'])
         data['icon'].append(properties['iconoverall'])
+
+        print('eventtype = ',properties['eventtype'])
+        data['event_type'].append(properties['eventtype'])
+
+        print('eventid = ',properties['eventid'])
+        data['event_id'].append(properties['eventid'])
         
         url = properties['url']
         print('url geometry = ',url['geometry'])
@@ -221,7 +228,7 @@ def info():
 
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
-    print(data['is_current'])
+    print(type(data['event_id'][0]))
     return render_template('home_page.html',data = data)
 
 @app.route('/map')
@@ -239,6 +246,18 @@ def bar():
 @app.route('/home_page')
 def home_page():
     return render_template('home_page.html',data = data)
+
+#this is the event data which is sent from js by ajax
+@app.route('/processing',methods = ['GET','POST'])
+def processing():
+    global eventdata
+    eventdata = request.json
+    return jsonify(eventdata)
+
+#This is the data collected from above
+@app.route('/more_info')
+def more_info():
+    return render_template('more_info.html',eventdata = eventdata)
 
     
 webbrowser.open('http://127.0.0.1:5000')
