@@ -9,7 +9,7 @@ import webbrowser
 app = Flask(__name__)
 
 data = {'latitude' : [],'longitude' : [],'country_names' : [],
-            'disaster_type' : [],
+            'disaster_type' : [],'is_current' : [],
             'disaster_names' : [],'exact_description' : [],
             'alert_level' : [],'alert_color' : [],
             'from_date' : [],'time' : [],'severity_text' : [],
@@ -91,6 +91,7 @@ def info():
         print('episode alert score = ',properties['episodealertscore'])
         print('is temporary = ',properties['istemporary'])
         print('is current = ',properties['iscurrent'])
+        data['is_current'].append(properties['iscurrent'])
         
         print('country = ',properties['country'])
         country = properties['country']
@@ -185,10 +186,6 @@ def info():
         green_disasters.append(disaster_color['green'])
         orange_disasters.append(disaster_color['orange'])
         red_disasters.append(disaster_color['red'])
-
-    print(disaster_count_pie_chart)
-    print(disaster_alert_count)
-    print(green_disasters,red_disasters,orange_disasters)
    
    #creating different traces of graphs individually for red,orange and green alerts
     green_bar_trace = go.Bar(name = 'green alert level',
@@ -224,6 +221,7 @@ def info():
 
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
+    print(data['is_current'])
     return render_template('home_page.html',data = data)
 
 @app.route('/map')
