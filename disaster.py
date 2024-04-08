@@ -255,10 +255,25 @@ def processing():
     return jsonify(eventdata)
 
 #This is the data collected from above
+
 @app.route('/more_info')
 def more_info():
-    return render_template('more_info.html',eventdata = eventdata)
+    client = GDACSAPIReader()
+    event = client.get_event(event_id = str(eventdata['id']),event_type = eventdata['type'])
+    print('Title = ',event['title'])
+    print('description = ',event['description'])
+    print('image url in enclosure = ',event['enclosure']['@url'])
+    print('event name = ',event['gdacs:eventname'])
+    print('published date = ',event['pubDate'])
+    print('from date = ',event['gdacs:fromdate'])
+    print('To date = ',event['gdacs:todate'])
+    print('icon = ',event['gdacs:icon'])
+    print('Alert level = ',event['gdacs:alertscore'])
+    print('Population = ',event['gdacs:population'])
+    print('Severity = ',event['gdacs:severity'])
+    print('Resources = ',event['gdacs:resources'])
+    print('duration in weeks = ',event['gdacs:durationinweek'])
+    return render_template('more_info.html',event = event)
 
-    
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)
