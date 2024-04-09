@@ -14,7 +14,7 @@ data = {'latitude' : [],'longitude' : [],'country_names' : [],
             'alert_level' : [],'alert_color' : [],
             'from_date' : [],'time' : [],'severity_text' : [],
             'icon' : [],'legend_icon_names' : [],'legend_icon_pics' : [],
-            'event_type' : [],'event_id' : []}
+            'event_type' : [],'event_id' : []
 
 @app.route('/')
 def info():
