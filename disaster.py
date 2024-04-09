@@ -272,8 +272,64 @@ def more_info():
     print('Population = ',event['gdacs:population'])
     print('Severity = ',event['gdacs:severity'])
     print('Resources = ',event['gdacs:resources'])
+    resource = event['gdacs:resources']['gdacs:resource']
     print('duration in weeks = ',event['gdacs:durationinweek'])
-    return render_template('more_info.html',event = event)
+
+    if(eventdata['type'] == 'EQ'):
+        earthquake_images = []
+
+        for details in resource:
+            if(details['@id'] == 'overviewmap'):
+                earthquake_images.append(details)
+            elif(details['@id'] == 'neic_pager'):
+                earthquake_images.append(details)
+            elif(details['@id'] == 'populationmap_cached'):
+                earthquake_images.append(details)
+            elif(details['@id'] == 'shakemap_populationmap_static_v01'):
+                earthquake_images.append(details)
+            elif(details['@id'] == 'shakemap_populationmap_overview_static_v01'):
+                earthquake_images.append(details)
+            elif(details['@id'] == 'shake_preliminary_image'):
+                earthquake_images.append(details)
+
+        return render_template('earthquake_info.html',event = event,earthquake_images = earthquake_images)
+    
+    elif(eventdata['type'] == 'TC'):
+        cyclone_images = []
+
+        for details in resource:
+            if(details['@id'] == 'storm_surge_maxheight'):
+                cyclone_images.append(details)
+            elif(details['@id'] == 'storm_surge_animation'):
+                cyclone_images.append(details)
+        
+        return render_template('cyclone_info.html',event = event,cyclone_images = cyclone_images)
+    
+    elif(eventdata['type'] == 'FL'):
+
+        for details in resource:
+            if(details['@id'] == 'overviewmap_cached'):
+                flood_image = details
+        
+        return render_template('flood_info.html',event = event,flood_image = flood_image)
+    
+    elif(eventdata['type'] == 'VO'):
+
+        for details in resource:
+            if(details['@id'] == 'overview_map_cached'):
+                eruption_image = details
+
+        eruption_image['@url'] = eruption_image['@url'][:-5] + '2' + eruption_image['@url'][-4:]
+
+        return render_template('eruption_info.html',event = event,eruption_image = eruption_image)
+    
+    elif(eventdata['type'] == 'DR'):
+
+        return render_template('drought_info.html',event = event)
+    
+    else:
+
+        return render_template('fires_info.html',event = event)
 
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)

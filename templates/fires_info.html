@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tropical Cyclone Information Portal</title>
+</head>
+<body>
+    <h1>title = {{event['title']}}</h1>
+    <h1>Description = {{event['description']}}</h1>
+    <h1>Event Name = {{event['gdacs:eventname']}}</h1>
+    <h1>Recorded date =  {{event['pubDate']}}</h1>
+    <h1>Event started = {{event['gdacs:fromdate']}}</h1>
+    <img src="{{event['gdacs:icon']}}" alt="disaster icon not found">
+    <h1>Alert Score = {{event['gdacs:alertscore']}}</h1>
+    <h1>Population Affected = {{event['gdacs:population']}}</h1>
+    <h1>Severity = {{event['gdacs:severity']}}</h1>
+    <h1>Number of Weeks Lasted = {{event['gdacs:durationinweek']}}</h1>
+</body>
+</html>
