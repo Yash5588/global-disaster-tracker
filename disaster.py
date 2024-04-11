@@ -307,21 +307,23 @@ def more_info():
     
     elif(eventdata['type'] == 'FL'):
 
+        flood_images = []
         for details in resource:
             if(details['@id'] == 'overviewmap_cached'):
-                flood_image = details
+                flood_images.append(details)
         
-        return render_template('flood_info.html',event = event,flood_image = flood_image)
+        return render_template('flood_info.html',event = event,flood_images = flood_images)
     
     elif(eventdata['type'] == 'VO'):
 
+        eruption_images = []
         for details in resource:
             if(details['@id'] == 'overview_map_cached'):
-                eruption_image = details
+                eruption_images.append(details)
 
-        eruption_image['@url'] = eruption_image['@url'][:-5] + '2' + eruption_image['@url'][-4:]
+        eruption_images['@url'] = eruption_images['@url'][:-5] + '2' + eruption_images['@url'][-4:]
 
-        return render_template('eruption_info.html',event = event,eruption_image = eruption_image)
+        return render_template('eruption_info.html',event = event,eruption_images = eruption_images)
     
     elif(eventdata['type'] == 'DR'):
 

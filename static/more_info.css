@@ -1,0 +1,93 @@
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background-color: #343a40 !important; /* Dark background for navbar */
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link:hover {
+    color: #ffffff !important;
+}
+
+.dropdown-menu:hover {
+    background-color: #343a40;
+}
+
+.dropdown-item:hover {
+    color: #494545 !important; 
+}
+
+/* Additional custom styles */
+header {
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+nav {
+    background-color: #212529;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.disaster-icon{
+    width: 100px;
+    height: 100px;
+}
+
+.info-heading{
+    display: flex;
+    align-items: center;
+}
+
+.info-heading img{
+    margin : 10px;
+    margin-right: 40px;
+}
+
+.line-width{
+    width : 700px;
+    margin: 10px;
+}
+
+.inner-text{
+    font-weight: bold;
+}
+
+.main-image{
+    position: absolute;
+    left: 800px;
+    margin-top: 500px;
+    width: 400px;
+}
+
+.cards{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.card{
+    margin : 100px;
+    border: 1px solid;
+}
+
+.eventname{
+    text-align: center;
+    font-weight: bold;
+    margin : 10px;
+}
