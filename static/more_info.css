@@ -73,6 +73,7 @@ nav a {
     left: 800px;
     margin-top: 500px;
     width: 400px;
+    border: 1px solid;
 }
 
 .cards{

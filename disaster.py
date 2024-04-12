@@ -280,16 +280,25 @@ def more_info():
 
         for details in resource:
             if(details['@id'] == 'overviewmap'):
+                details['gdacs:description'] = "This population density overview map offers a comprehensive depiction of the distribution of population across a 100-kilometer radius"
                 earthquake_images.append(details)
+
             elif(details['@id'] == 'neic_pager'):
                 earthquake_images.append(details)
+        
             elif(details['@id'] == 'populationmap_cached'):
+                details['gdacs:description'] = "The Population density map zoomed Overview"
                 earthquake_images.append(details)
+
             elif(details['@id'] == 'shakemap_populationmap_static_v01'):
+                details['gdacs:description'] = "This Shakemap provides comprehensive visual representation of seismic activity and its potential impact on densely populated areas within the region."
                 earthquake_images.append(details)
+
             elif(details['@id'] == 'shakemap_populationmap_overview_static_v01'):
                 earthquake_images.append(details)
+
             elif(details['@id'] == 'shake_preliminary_image'):
+                details['gdacs:description'] = "This rapid impact image provides a comprehensive snapshot of the aftermath of this earthquake event, offering crucial insights into the extent and severity of its impact on affected regions."
                 earthquake_images.append(details)
 
         return render_template('earthquake_info.html',event = event,earthquake_images = earthquake_images)
@@ -298,9 +307,13 @@ def more_info():
         cyclone_images = []
 
         for details in resource:
+            
             if(details['@id'] == 'storm_surge_maxheight'):
+                details['gdacs:description'] = "This storm surge max height shows how high the water level rises above normal during this tropical cyclone"
                 cyclone_images.append(details)
+
             elif(details['@id'] == 'storm_surge_animation'):
+                details['gdacs:description'] = "This storm surge animation shows how the water level rises and falls along the coast during this tropical cyclone"
                 cyclone_images.append(details)
         
         return render_template('cyclone_info.html',event = event,cyclone_images = cyclone_images)
@@ -310,6 +323,7 @@ def more_info():
         flood_images = []
         for details in resource:
             if(details['@id'] == 'overviewmap_cached'):
+                details['gdacs:description'] = "This flood overview map provides a comprehensive visual representation of areas affected by this flooding within this specific region"
                 flood_images.append(details)
         
         return render_template('flood_info.html',event = event,flood_images = flood_images)
