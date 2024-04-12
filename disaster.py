@@ -229,7 +229,7 @@ def info():
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
     print(type(data['event_id'][0]))
-    return render_template('home_page.html',data = data)
+    return render_template('login.html')
 
 @app.route('/map')
 def map():
@@ -346,6 +346,16 @@ def more_info():
     else:
 
         return render_template('fires_info.html',event = event)
+
+    
+@app.route('/login',methods = ["POST"])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    email = request.form['email']
+    contact = request.form['contact']
+    return render_template('home_page.html',data = data)
+
 
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)
