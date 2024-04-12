@@ -1,0 +1,20 @@
+.input_form{
+    text-align: center;
+    border: 1px solid;
+    width : 400px;
+    margin-top: 150px;
+    margin-left: 600px;
+    font-size: large;
+}
+
+.form_items{
+    margin: 20px;
+}
+
+.input_form h1{
+    margin-bottom: 30px;
+}
+
+#submit{
+    width: 100px;
+}

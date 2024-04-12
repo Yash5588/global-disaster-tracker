@@ -4,7 +4,17 @@ from flask import Flask,json,render_template,request,jsonify,session
 import plotly.graph_objects as go
 import plotly.express as px
 from collections import Counter
+import mysql.connector
 import webbrowser
+
+connection = mysql.connector.connect(
+    host = "localhost",
+    user = "yash559",
+    password = "1234",
+    database = "disaster"
+)
+
+cursor = connection.cursor()
 
 app = Flask(__name__,template_folder="templates")
 
@@ -229,7 +239,7 @@ def info():
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
     print(type(data['event_id'][0]))
-    return render_template('login.html')
+    return render_template('sign_up.html')
 
 @app.route('/map')
 def map():
@@ -348,14 +358,22 @@ def more_info():
         return render_template('fires_info.html',event = event)
 
     
-@app.route('/login',methods = ["POST"])
-def login():
+@app.route('/sign_up',methods = ["POST"])
+def sign_up():
     username = request.form['username']
     password = request.form['password']
     email = request.form['email']
     contact = request.form['contact']
-    return render_template('home_page.html',data = data)
 
+    insert_query = "INSERT INTO login_details (username,password,email,contact) VALUES (%s,%s,%s,%s)"
+
+    cursor.execute(insert_query,(username,password,email,contact))
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+    return render_template('home_page.html',data = data)
 
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)
