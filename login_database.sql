@@ -14,3 +14,6 @@ alter table login_details modify column password varchar(255) not null unique;
 
 use disaster;
 select * from login_details;
+
+use disaster;
+delete from login_details;
