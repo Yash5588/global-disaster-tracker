@@ -17,3 +17,16 @@ select * from login_details;
 
 use disaster;
 delete from login_details;
+
+use disaster;
+alter table login_details add constraint uni_pass_cont unique(password,contact);
+
+use disaster;
+alter table login_details drop index password;
+
+desc login_details
+
+alter table login_details drop column contact
+
+alter table login_details add password varchar(255) not null;
+alter table login_details add contact varchar(255) not null;

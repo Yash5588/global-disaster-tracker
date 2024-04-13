@@ -1,6 +1,6 @@
 from gdacs.api import GDACSAPIReader
 from gdacs.api import GDACSAPIError
-from flask import Flask,json,render_template,request,jsonify,session
+from flask import Flask,json,render_template,request,jsonify,session,redirect,url_for
 import plotly.graph_objects as go
 import plotly.express as px
 from collections import Counter
@@ -20,6 +20,10 @@ data = {'latitude' : [],'longitude' : [],'country_names' : [],
 
 @app.route('/')
 def info():
+    return render_template('sign_up.html')
+
+@app.route('/sign_up',methods = ['POST'])
+def sign_up():
     try:
         client = GDACSAPIReader()
         geojson_obj = client.latest_events()
@@ -231,7 +235,37 @@ def info():
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
     print(type(data['event_id'][0]))
-    return render_template('sign_up.html')
+    
+    try:
+        connection = mysql.connector.connect(
+            host = "localhost",
+            user = "yash559",
+            password = "1234",
+            database = "disaster"
+        ) 
+        
+        #request.from takes names of attributes not ids
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        contact = request.form['contact']
+
+
+        cursor = connection.cursor()
+
+        insert_query = "INSERT INTO login_details (username,password,email,contact) VALUES (%s,%s,%s,%s)"
+
+        cursor.execute(insert_query,(username,password,email,contact))
+
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+        return redirect(url_for('home_page'))
+    
+    except:
+
+        return render_template('sign_up.html',error = "The User Already Exists Enter Valid Username Or Email")
 
 @app.route('/map')
 def map():
@@ -349,35 +383,6 @@ def more_info():
 
         return render_template('fires_info.html',event = event)
 
-    
-@app.route('/sign_up',methods = ["POST"])
-def sign_up():
-
-        connection = mysql.connector.connect(
-            host = "localhost",
-            user = "yash559",
-            password = "1234",
-            database = "disaster"
-        ) 
-        
-        #request.from takes names of attributes not ids
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        contact = request.form['contact']
-
-
-        cursor = connection.cursor()
-
-        insert_query = "INSERT INTO login_details (username,password,email,contact) VALUES (%s,%s,%s,%s)"
-
-        cursor.execute(insert_query,(username,password,email,contact))
-
-        connection.commit()
-        cursor.close()
-        connection.close()
-
-        return render_template('home_page.html',data = data)
 
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)

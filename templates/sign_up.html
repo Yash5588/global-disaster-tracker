@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="{{url_for('static',filename = 'sign_up.css')}}">
 </head>
 <body>
+
     <header>
-        <h1  class = "border-bottom border-success border-5">Global Disaster Tracker</h1>
+        <h1  class = "border-bottom border-success border-5 shadow-lg">Global Disaster Tracker</h1>
+        <h3 class = "form-top text-danger shadow-lg">Register to Stay Informed: Receive Timely Alerts via Email and Phone Regarding Recent Disasters</h3>
     </header>
-    <form id = "form_id" class = "input_form border border-5 border-success bg-dark text-white" onsubmit="validate()">
+
+    <form id = "form_id" action = "/" class = "input_form bg-dark text-white shodow-lg rounded" onsubmit="validate()">
         <h1 class = "form_items border-bottom border-4 border-success">Sign Up Here</h1>
         <div class = "form_items">
             <label for="username">Username:</label>
@@ -33,8 +36,9 @@
             <input type="tel" class = "form-control border-2 border-success" id="contact" name="contact" pattern="[1-9]{1}[0-9]{9}" placeholder="Enter Your Contact">
             <br>
         </div>
-        <input type="submit" id = "submit" value="Submit" class = "btn btn-success form_items">
+        <input type="submit" id = "submit" value="Sign Up" class = "btn btn-success form_items">
     </form>
+    <h4 id = "error" class = "alert alert-danger" role="alert">{{error}}</h4>
 
     <script>
         function validate(){
@@ -54,9 +58,18 @@
             }
         }
 
+        //to hide display of error block when the page is loaded initially
+        var currentpath = window.location.pathname;
+        if(currentpath == '/'){
+
+            var error = document.getElementById('error');
+            error.style.display = "none";
+        }
+
     </script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
 </body>
 </html>
