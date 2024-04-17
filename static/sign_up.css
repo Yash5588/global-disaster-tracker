@@ -1,3 +1,6 @@
+body{
+    background-color: #dee2e6;
+}
 .input_form{
     text-align: center;
     border: 1px solid;
@@ -12,6 +15,7 @@
 }
 
 .input_form h1{
+    display: inline-block;
     margin-bottom: 30px;
 }
 
@@ -27,13 +31,17 @@ header h1{
 }
 
 .form-top{
-    display: inline-block;
+    text-align: center;
     margin-top: 15px;
-    margin-left: 120px;
 }
 
 #error{
     display: inline-block;
     margin-top: 20px;
     margin-left: 500px;
+}
+
+.return-buttons{
+    margin-top: 20px;
+    margin-left: 140px;
 }

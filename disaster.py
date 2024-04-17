@@ -20,10 +20,6 @@ data = {'latitude' : [],'longitude' : [],'country_names' : [],
 
 @app.route('/')
 def info():
-    return render_template('sign_up.html')
-
-@app.route('/sign_up',methods = ['POST'])
-def sign_up():
     try:
         client = GDACSAPIReader()
         geojson_obj = client.latest_events()
@@ -235,7 +231,16 @@ def sign_up():
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
     print(type(data['event_id'][0]))
-    
+
+    return redirect(url_for('home_page'))
+
+@app.route('/sign_up')
+def sign_up():
+    return render_template('sign_up.html')
+
+
+@app.route('/sign_up_validate',methods = ['POST'])
+def sign_up_validate():
     try:
         connection = mysql.connector.connect(
             host = "localhost",
@@ -265,7 +270,42 @@ def sign_up():
     
     except:
 
-        return render_template('sign_up.html',error = "The User Already Exists Enter Valid Username Or Email")
+        return render_template('sign_up.html',error = "The User Already Exists Login To Get The Latest Details")
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/login_check',methods = ['POST'])
+def login_check():
+    connection = mysql.connector.connect(
+        host = "localhost",
+        user = "yash559",
+        password = "1234",
+        database = "disaster"
+    )
+
+    username = request.form['username']
+    password = request.form['password']
+
+    cursor = connection.cursor()
+
+    retrive_query = "select email from login_details where username = %s and password = %s"
+
+    cursor.execute(retrive_query,(username,password))
+
+    email = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    
+    if(len(email) == 0):
+        return render_template('login.html',error = "Invalid Username Or Password Sign Up before Login")
+    
+    email = email[0][0]
+
+    return redirect(url_for('home_page'))
+
 
 @app.route('/map')
 def map():
@@ -369,9 +409,10 @@ def more_info():
         eruption_images = []
         for details in resource:
             if(details['@id'] == 'overview_map_cached'):
+                details['gdacs:description'] = "This overview map provides a comprehensive depiction of the recent volcanic eruption, capturing critical information to aid in understanding the extent and impact of the event."
                 eruption_images.append(details)
 
-        eruption_images['@url'] = eruption_images['@url'][:-5] + '2' + eruption_images['@url'][-4:]
+        eruption_images[0]['@url'] = eruption_images[0]['@url'][:-5] + '2' + eruption_images[0]['@url'][-4:]
 
         return render_template('eruption_info.html',event = event,eruption_images = eruption_images)
     

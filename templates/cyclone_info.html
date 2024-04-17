@@ -52,7 +52,7 @@
             <h4 class = "inner-text">{{event['description']}}</h4>
         </li>
 
-        <img src = "{{event['enclosure']['@url']}}" class = "main-image shadow-lg" alt="image not found">
+        <img src = "{{event['enclosure']['@url']}}" class = "main-image img-thumbnail shadow-lg rounded" alt="image not found">
         <li class = "list-group-item line-width shadow-lg"><h3 class = "inner-text">Event started = {{event['gdacs:fromdate']}}</h3></li>
         <li class = "list-group-item line-width shadow-lg"><h3 class = "inner-text">Recorded At = {{event['pubDate']}}</h3></li>
         <li class = "list-group-item line-width shadow-lg"><h3 class = "inner-text">Alert Score = {{event['gdacs:alertscore']}}</h3></li>
