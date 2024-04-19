@@ -6,6 +6,8 @@ import plotly.express as px
 from collections import Counter
 import mysql.connector
 import webbrowser
+import smtplib
+from email.mime.text import MIMEText
 
 
 app = Flask(__name__,template_folder="templates")
@@ -17,6 +19,7 @@ data = {'latitude' : [],'longitude' : [],'country_names' : [],
             'from_date' : [],'time' : [],'severity_text' : [],
             'icon' : [],'legend_icon_names' : [],'legend_icon_pics' : [],
             'event_type' : [],'event_id' : []}
+
 
 @app.route('/')
 def info():
@@ -238,9 +241,17 @@ def info():
 def sign_up():
     return render_template('sign_up.html')
 
+#this is ajax request request.json we are returing again to ajax as success which is taken as response in ajax
+@app.route('/get_location',methods = ['GET','POST'])
+def get_location():
+    #user_location is taken globally
+    global user_location
+    user_location = request.json
+    return jsonify(user_location)
 
 @app.route('/sign_up_validate',methods = ['POST'])
 def sign_up_validate():
+    print(user_location)
     try:
         connection = mysql.connector.connect(
             host = "localhost",
@@ -255,7 +266,6 @@ def sign_up_validate():
         email = request.form['email']
         contact = request.form['contact']
 
-
         cursor = connection.cursor()
 
         insert_query = "INSERT INTO login_details (username,password,email,contact) VALUES (%s,%s,%s,%s)"
@@ -267,7 +277,7 @@ def sign_up_validate():
         connection.close()
 
         return redirect(url_for('home_page'))
-    
+
     except:
 
         return render_template('sign_up.html',error = "The User Already Exists Login To Get The Latest Details")
@@ -303,7 +313,7 @@ def login_check():
         return render_template('login.html',error = "Invalid Username Or Password Sign Up before Login")
     
     email = email[0][0]
-
+    
     return redirect(url_for('home_page'))
 
 
@@ -323,7 +333,7 @@ def bar():
 def home_page():
     return render_template('home_page.html',data = data)
 
-#this is the event data which is sent from js by ajax
+#this is the event data which is sent from js by ajax from home_page.html
 @app.route('/processing',methods = ['GET','POST'])
 def processing():
     global eventdata
