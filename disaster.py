@@ -242,16 +242,15 @@ def sign_up():
     return render_template('sign_up.html')
 
 #this is ajax request request.json we are returing again to ajax as success which is taken as response in ajax
-@app.route('/get_location',methods = ['GET','POST'])
-def get_location():
-    #user_location is taken globally
-    global user_location
-    user_location = request.json
-    return jsonify(user_location)
+@app.route('/sign_up_get_location',methods = ['GET','POST'])
+def sign_up_get_location():
+    #signup_user_location is taken globally
+    global signup_user_location
+    signup_user_location = request.json
+    return jsonify(signup_user_location)
 
 @app.route('/sign_up_validate',methods = ['POST'])
 def sign_up_validate():
-    print(user_location)
     try:
         connection = mysql.connector.connect(
             host = "localhost",
@@ -265,12 +264,14 @@ def sign_up_validate():
         password = request.form['password']
         email = request.form['email']
         contact = request.form['contact']
+        user_latitude = str(signup_user_location['user_latitude'])
+        user_longitude = str(signup_user_location['user_longitude'])
 
         cursor = connection.cursor()
 
-        insert_query = "INSERT INTO login_details (username,password,email,contact) VALUES (%s,%s,%s,%s)"
+        insert_query = "INSERT INTO login_details (username,password,email,contact,latitude,longitude) VALUES (%s,%s,%s,%s,%s,%s)"
 
-        cursor.execute(insert_query,(username,password,email,contact))
+        cursor.execute(insert_query,(username,password,email,contact,user_latitude,user_longitude))
 
         connection.commit()
         cursor.close()
@@ -286,6 +287,13 @@ def sign_up_validate():
 def login():
     return render_template('login.html')
 
+@app.route('/login_get_location',methods = ['GET','POST'])
+def login_get_location():
+    global login_user_location
+    login_user_location = request.json
+    return jsonify(login_user_location)
+
+
 @app.route('/login_check',methods = ['POST'])
 def login_check():
     connection = mysql.connector.connect(
@@ -297,6 +305,8 @@ def login_check():
 
     username = request.form['username']
     password = request.form['password']
+    user_latitude = str(login_user_location['user_latitude'])
+    user_longitude = str(login_user_location['user_longitude'])
 
     cursor = connection.cursor()
 
@@ -306,14 +316,23 @@ def login_check():
 
     email = cursor.fetchall()
 
-    cursor.close()
-    connection.close()
     
     if(len(email) == 0):
         return render_template('login.html',error = "Invalid Username Or Password Sign Up before Login")
     
+    print(login_user_location)
+    
+    update_location_query = "update login_details set latitude = %s,longitude = %s  where username = %s and password = %s"
+    
+    cursor.execute(update_location_query,(user_latitude,user_longitude,username,password))
+
+    connection.commit()
+    cursor.close()
+    connection.close()
+    
     email = email[0][0]
     
+
     return redirect(url_for('home_page'))
 
 
