@@ -8,9 +8,13 @@ import mysql.connector
 import webbrowser
 import smtplib
 from email.mime.text import MIMEText
+from sign_up import sign_up_bp
+from login import login_bp
 
 
 app = Flask(__name__,template_folder="templates")
+app.register_blueprint(sign_up_bp)
+app.register_blueprint(login_bp)
 
 data = {'latitude' : [],'longitude' : [],'country_names' : [],
             'disaster_type' : [],'is_current' : [],
@@ -236,105 +240,6 @@ def info():
     print(type(data['event_id'][0]))
 
     return redirect(url_for('home_page'))
-
-@app.route('/sign_up')
-def sign_up():
-    return render_template('sign_up.html')
-
-#this is ajax request request.json we are returing again to ajax as success which is taken as response in ajax
-@app.route('/sign_up_get_location',methods = ['GET','POST'])
-def sign_up_get_location():
-    #signup_user_location is taken globally
-    global signup_user_location
-    signup_user_location = request.json
-    return jsonify(signup_user_location)
-
-@app.route('/sign_up_validate',methods = ['POST'])
-def sign_up_validate():
-    try:
-        connection = mysql.connector.connect(
-            host = "localhost",
-            user = "yash559",
-            password = "1234",
-            database = "disaster"
-        ) 
-        
-        #request.from takes names of attributes not ids
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        contact = request.form['contact']
-        user_latitude = str(signup_user_location['user_latitude'])
-        user_longitude = str(signup_user_location['user_longitude'])
-
-        cursor = connection.cursor()
-
-        insert_query = "INSERT INTO login_details (username,password,email,contact,latitude,longitude) VALUES (%s,%s,%s,%s,%s,%s)"
-
-        cursor.execute(insert_query,(username,password,email,contact,user_latitude,user_longitude))
-
-        connection.commit()
-        cursor.close()
-        connection.close()
-
-        return redirect(url_for('home_page'))
-
-    except:
-
-        return render_template('sign_up.html',error = "The User Already Exists Login To Get The Latest Details")
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
-
-@app.route('/login_get_location',methods = ['GET','POST'])
-def login_get_location():
-    global login_user_location
-    login_user_location = request.json
-    return jsonify(login_user_location)
-
-
-@app.route('/login_check',methods = ['POST'])
-def login_check():
-    connection = mysql.connector.connect(
-        host = "localhost",
-        user = "yash559",
-        password = "1234",
-        database = "disaster"
-    )
-
-    username = request.form['username']
-    password = request.form['password']
-    user_latitude = str(login_user_location['user_latitude'])
-    user_longitude = str(login_user_location['user_longitude'])
-
-    cursor = connection.cursor()
-
-    retrive_query = "select email from login_details where username = %s and password = %s"
-
-    cursor.execute(retrive_query,(username,password))
-
-    email = cursor.fetchall()
-
-    
-    if(len(email) == 0):
-        return render_template('login.html',error = "Invalid Username Or Password Sign Up before Login")
-    
-    print(login_user_location)
-    
-    update_location_query = "update login_details set latitude = %s,longitude = %s  where username = %s and password = %s"
-    
-    cursor.execute(update_location_query,(user_latitude,user_longitude,username,password))
-
-    connection.commit()
-    cursor.close()
-    connection.close()
-    
-    email = email[0][0]
-    
-
-    return redirect(url_for('home_page'))
-
 
 @app.route('/map')
 def map():
