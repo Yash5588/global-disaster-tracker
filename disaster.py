@@ -14,9 +14,6 @@ from more_info import more_info_bp
 
 
 app = Flask(__name__,template_folder="templates")
-app.register_blueprint(sign_up_bp)
-app.register_blueprint(login_bp)
-app.register_blueprint(more_info_bp)
 
 data = {'latitude' : [],'longitude' : [],'country_names' : [],
             'disaster_type' : [],'is_current' : [],
@@ -24,8 +21,14 @@ data = {'latitude' : [],'longitude' : [],'country_names' : [],
             'alert_level' : [],'alert_color' : [],
             'from_date' : [],'time' : [],'severity_text' : [],
             'icon' : [],'legend_icon_names' : [],'legend_icon_pics' : [],
-            'event_type' : [],'event_id' : []}
+            'event_type' : [],'event_id' : [],
+            'user_disaster_distance' : {'data_index' : [],'distance' : []}
+        }
 
+app.config['data'] = data
+app.register_blueprint(sign_up_bp)
+app.register_blueprint(login_bp,data = data)
+app.register_blueprint(more_info_bp)
 
 @app.route('/')
 def info():
@@ -257,7 +260,12 @@ def bar():
 
 @app.route('/home_page')
 def home_page():
+    print(data)
     return render_template('home_page.html',data = data)
+
+@app.route('/nearest_disasters')
+def nearest_disasters():
+    return render_template('nearest_disasters.html',data = data)
 
 webbrowser.open('http://127.0.0.1:5000')
 app.run(debug = True)
