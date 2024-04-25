@@ -68,6 +68,9 @@ def login_check():
     disaster_latitudes = data['latitude']
     disaster_longitudes = data['longitude']
     
+    data['user_disaster_distance']['distance'] = []
+    data['user_disaster_distance']['data_index'] = []
+
     for i in range(len(disaster_longitudes)):
         distance = calculate_distance(user_latitude,user_longitude,disaster_latitudes[i],disaster_longitudes[i])
         print('country name =',data['country_names'][i])
@@ -90,6 +93,10 @@ def login_check():
     data['user_disaster_distance']['data_index'],data['user_disaster_distance']['distance'] = zip(*zipped_list)
     data['user_disaster_distance']['data_index'] = list(data['user_disaster_distance']['data_index'])
     data['user_disaster_distance']['distance'] = list(data['user_disaster_distance']['distance'])
+
+    print(data)
+    print(len(data['latitude']))
+    print(len(data['user_disaster_distance']['data_index']))
 
     email = email[0][0]
     

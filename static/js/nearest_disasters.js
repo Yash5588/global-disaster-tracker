@@ -26,14 +26,14 @@ for(let i=0;i<latitude.length && distances[i] <= 100;i++){
     var j = data_indices[i];
     content_100km += 
         '<div class="col-md-6">' +
-            '<div class="card mb-3">' +
+            '<div class="card mb-3 shadow-lg">' +
                 '<div class="card-body">' + 
-                    '<h5 class="card-title">' + disaster_names[j] + '</h5>' + 
-                    '<p class="card-text">Latitude: ' + latitude[j] + '   Longitude: ' + longitude[j] + '</p>' + 
-                    '<p class="card-text">Distance from Your Location: ' + Math.round(distances[i]) + 'kilometers</p>' + 
-                    '<p class="card-text">Severity: ' + severity_text[j]  + '</p>' + 
-                    '<p class="card-text">Alert Level: ' + alert_level[i] + '</p>' + 
-                    '<p class="card-text">' + exact_description[j] + '</p>' + 
+                    '<h3 class="card-title">' + disaster_names[j] + '</h3>' + 
+                    '<h6 class="card-text">Latitude: ' + latitude[j] + '<br>Longitude: ' + longitude[j] + '</h6>' + 
+                    '<h6 class="card-text">Distance from Your Location: ' + Math.round(distances[i]) + 'km</h6>' + 
+                    '<h6 class="card-text">Severity: ' + severity_text[j]  + '</h6>' + 
+                    '<h6 class="card-text">Alert Level: ' + alert_level[i] + '</h6>' + 
+                    '<h6 class="card-text">' + exact_description[j] + '</h6>' + 
                 '</div>' + 
             '</div>' + 
         '</div>';
