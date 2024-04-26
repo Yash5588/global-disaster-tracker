@@ -18,25 +18,58 @@ var event_id = flaskData.event_id;
 var data_indices = flaskData.user_disaster_distance.data_index;
 var distances = flaskData.user_disaster_distance.distance;
 
+var row_col_50km = document.getElementById('row_col_50km');
 var row_col_100km = document.getElementById('row_col_100km');
-row_col_100km.innerHTML = '';
-var content_100km = '';
+var row_col_200km = document.getElementById('row_col_200km');
+var row_col_500km = document.getElementById('row_col_500km');
 
-for(let i=0;i<latitude.length && distances[i] <= 100;i++){
+var flag_50km = false;
+var flag_100km = false;
+var flag_200km = false;
+var flag_500km = false;
+
+for(let i=0;i<latitude.length;i++){
     var j = data_indices[i];
-    content_100km += 
+    content =
         '<div class="col-md-6">' +
-            '<div class="card mb-3 shadow-lg">' +
-                '<div class="card-body">' + 
-                    '<h3 class="card-title">' + disaster_names[j] + '</h3>' + 
-                    '<h6 class="card-text">Latitude: ' + latitude[j] + '<br>Longitude: ' + longitude[j] + '</h6>' + 
-                    '<h6 class="card-text">Distance from Your Location: ' + Math.round(distances[i]) + 'km</h6>' + 
-                    '<h6 class="card-text">Severity: ' + severity_text[j]  + '</h6>' + 
-                    '<h6 class="card-text">Alert Level: ' + alert_level[i] + '</h6>' + 
-                    '<h6 class="card-text">' + exact_description[j] + '</h6>' + 
-                '</div>' + 
+            '<div class="card mb-3 shadow-lg">' + 
+                '<ul class = "card-body list-group list-group-flush">' + 
+                    '<li class = "list-group-item"><h3 class="card-title">' + disaster_names[j] + '<img class = "icons" src="' + icon[j] +'" alt=""> </h3> </li>' + 
+                    '<li class = "list-group-item"><h6 class="card-text">Latitude: ' + latitude[j] + '<br>Longitude: ' + longitude[j] + '</h6> </li>' + 
+                    '<li class = "list-group-item"><h6 class="card-text">Distance from Your Location: ' + Math.round(distances[i]) + 'km</h6> </li>' + 
+                    '<li class = "list-group-item"><h6 class="card-text">Severity: ' + severity_text[j]  + '</h6> </li>' + 
+                    '<li class = "list-group-item"><h6 class="card-text">Alert Level: ' + alert_level[j] + '</h6> </li>' + 
+                    '<li class = "list-group-item"><h6 class="card-text">' + exact_description[j] + '</h6> </li>' + 
+                '</ul>' +
             '</div>' + 
         '</div>';
+    if(distances[i] <= 50){
+        row_col_50km.innerHTML += content;
+        flag_50km = true;
+    }
+    else if(distances[i] > 50 && distances[i] <= 100){
+        row_col_100km.innerHTML += content;
+        flag_100km = true;
+    }
+    else if(distances[i] > 100 && distances[i] <= 200){
+        row_col_200km.innerHTML += content;
+        flag_200km = true;
+    }
+    else if(distances[i] > 200 && distances[i] <= 500){
+        row_col_500km.innerHTML += content;
+        flag_500km = true;
+    }
 }
 
-row_col_100km.innerHTML = content_100km;
+if(!flag_50km){
+    document.getElementById('empty_50km').innerHTML += 'There are no Disasters Currently in your 50km Radius'
+}
+if(!flag_100km){
+    document.getElementById('empty_100km').innerHTML += 'There are no Disasters Currently in your 100km Radius'
+}
+if(!flag_200km){
+    document.getElementById('empty_200km').innerHTML += 'There are no Disasters Currently in your 200km Radius'
+}
+if(!flag_500km){
+    document.getElementById('empty_500km').innerHTML += 'There are no Disasters Currently in your 500km Radius'
+}

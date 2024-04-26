@@ -97,6 +97,7 @@ def login_check():
     print(data)
     print(len(data['latitude']))
     print(len(data['user_disaster_distance']['data_index']))
+    print(len(data['latitude']))
 
     email = email[0][0]
     

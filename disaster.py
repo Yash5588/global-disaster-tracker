@@ -243,7 +243,8 @@ def info():
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
     print(type(data['event_id'][0]))
-
+    print(len(data['latitude']))
+    print(len(data['disaster_names']))
     return redirect(url_for('home_page'))
 
 @app.route('/map')
@@ -260,7 +261,6 @@ def bar():
 
 @app.route('/home_page')
 def home_page():
-    print(data)
     return render_template('home_page.html',data = data)
 
 @app.route('/nearest_disasters')
