@@ -3,6 +3,8 @@ from flask import Flask,render_template,jsonify,redirect,request,url_for
 from flask import Blueprint,current_app
 import mysql.connector
 import math
+import smtplib
+from email.mime.text import MIMEText
 
 login_bp = Blueprint('login',__name__)
 
@@ -15,6 +17,18 @@ def calculate_distance(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = R * c  # Distance in kilometers
     return distance
+
+#function to send gmail
+def send_email(subject, body, sender, recipients, password):
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = ','.join(recipients)
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+       smtp_server.login(sender, password)
+       smtp_server.sendmail(sender, recipients, msg.as_string())
+    print("Message sent!")
+
 
 @login_bp.route('/login')
 def login():
@@ -100,5 +114,5 @@ def login_check():
     print(len(data['latitude']))
 
     email = email[0][0]
-    
+        
     return redirect(url_for('nearest_disasters'))

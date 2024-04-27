@@ -10,6 +10,39 @@ header{
     text-align: center;
 }
 
+.navbar {
+    background-color: #343a40 !important; /* Dark background for navbar */
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link:hover {
+    color: #ffffff !important;
+}
+
+.dropdown-menu:hover {
+    background-color: #343a40;
+}
+
+.dropdown-item:hover {
+    color: #494545 !important; 
+}
+
+nav {
+    background-color: #212529;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
 .headings{
     text-align: center;
     margin-top: 40px;
@@ -35,3 +68,33 @@ header{
 .icons{
     margin-left: 15px;
 }
+
+.form-top{
+    white-space: pre-wrap;
+}
+
+.scroll-bar {
+    margin-top: 30px;
+    width: 100%;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+    white-space: nowrap; /* Prevent line breaks */
+  }
+  
+  /* Style for the title */
+  .scroll-bar h2 {
+    text-align: center;
+    animation: scrollText 10s linear infinite; /* Adjust duration as needed */
+  }
+  
+  /* Animation for infinite scrolling */
+  @keyframes scrollText {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }

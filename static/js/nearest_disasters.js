@@ -18,11 +18,13 @@ var event_id = flaskData.event_id;
 var data_indices = flaskData.user_disaster_distance.data_index;
 var distances = flaskData.user_disaster_distance.distance;
 
+var row_col_10km = document.getElementById('row_col_10km')
 var row_col_50km = document.getElementById('row_col_50km');
 var row_col_100km = document.getElementById('row_col_100km');
 var row_col_200km = document.getElementById('row_col_200km');
 var row_col_500km = document.getElementById('row_col_500km');
 
+var flag_10km = false;
 var flag_50km = false;
 var flag_100km = false;
 var flag_200km = false;
@@ -43,7 +45,12 @@ for(let i=0;i<latitude.length;i++){
                 '</ul>' +
             '</div>' + 
         '</div>';
-    if(distances[i] <= 50){
+
+    if(distances[i] <= 10){
+        row_col_10km.innerHTML += content;
+        flag_10km = true;
+    }
+    else if(distances[i] > 10 && distances[i] <= 50){
         row_col_50km.innerHTML += content;
         flag_50km = true;
     }
@@ -61,6 +68,9 @@ for(let i=0;i<latitude.length;i++){
     }
 }
 
+if(!flag_10km){
+    document.getElementById('empty_10km').innerHTML += 'There are no Disasters Currently in your 10km Radius'
+}
 if(!flag_50km){
     document.getElementById('empty_50km').innerHTML += 'There are no Disasters Currently in your 50km Radius'
 }
