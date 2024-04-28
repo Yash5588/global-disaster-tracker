@@ -66,19 +66,15 @@ for(i=0;i<latitude.length;i++)
     }
     else if(disaster_type[i] == 'Tropical'){
         tropical.innerHTML += '<tr>' + '<td>' + (++tropical_flag) + '</td>' + table_row;
-        tropical_flag = true;
     }
     else if(disaster_type[i] == 'Forest'){
         forest.innerHTML += '<tr>' + '<td>' + (++forest_flag) + '</td>' + table_row;
-        forest_flag = true;
     }
     else if(disaster_type[i] == 'Eruption'){
         eruption.innerHTML += '<tr>' + '<td>' + (++eruption_flag) + '</td>' + table_row;
-        eruption_flag = true;
     }
     else if(disaster_type[i] == 'Tsunami'){
         tsunami.innerHTML += '<tr>' + '<td>' + (++tsunami_flag) + '</td>' + table_row;
-        tsunami_flag = true;
     }
 
     event_info = event_info.replace(event_id[i],'{eventid}');

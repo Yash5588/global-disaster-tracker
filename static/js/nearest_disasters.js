@@ -30,18 +30,27 @@ var flag_100km = false;
 var flag_200km = false;
 var flag_500km = false;
 
+
+
 for(let i=0;i<latitude.length;i++){
     var j = data_indices[i];
+    var event_info = '<button class = "btn btn-success" onclick = "fetch_event_details({eventid},{letter1},{letter2})"> Get More Info </button>';
+
+    event_info = event_info.replace('{eventid}',event_id[j]);
+    event_info = event_info.replace('{letter1}',event_type[j].charCodeAt(0));
+    event_info = event_info.replace('{letter2}',event_type[j].charCodeAt(1));
+
     content =
         '<div class="col-md-6">' +
             '<div class="card mb-3 shadow-lg">' + 
                 '<ul class = "card-body list-group list-group-flush">' + 
                     '<li class = "list-group-item"><h3 class="card-title">' + disaster_names[j] + '<img class = "icons" src="' + icon[j] +'" alt=""> </h3> </li>' + 
                     '<li class = "list-group-item"><h6 class="card-text">Latitude: ' + latitude[j] + '<br>Longitude: ' + longitude[j] + '</h6> </li>' + 
-                    '<li class = "list-group-item"><h6 class="card-text">Distance from Your Location: ' + Math.round(distances[i]) + 'km</h6> </li>' + 
+                    '<li class = "list-group-item"><h6 class="card-text">Distance from Your Location: ' + distances[i] + 'km</h6> </li>' + 
                     '<li class = "list-group-item"><h6 class="card-text">Severity: ' + severity_text[j]  + '</h6> </li>' + 
                     '<li class = "list-group-item"><h6 class="card-text">Alert Level: ' + alert_level[j] + '</h6> </li>' + 
                     '<li class = "list-group-item"><h6 class="card-text">' + exact_description[j] + '</h6> </li>' + 
+                    '<li class = "list-group-item">' + event_info + '</li>' + 
                 '</ul>' +
             '</div>' + 
         '</div>';
@@ -66,6 +75,10 @@ for(let i=0;i<latitude.length;i++){
         row_col_500km.innerHTML += content;
         flag_500km = true;
     }
+
+    event_info = event_info.replace(event_id[j],'{eventid}');
+    event_info = event_info.replace(event_type[j].charCodeAt(0),'{letter1}');
+    event_info = event_info.replace(event_type[j].charCodeAt(1),'{letter2}');
 }
 
 if(!flag_10km){
@@ -82,4 +95,28 @@ if(!flag_200km){
 }
 if(!flag_500km){
     document.getElementById('empty_500km').innerHTML += 'There are no Disasters Currently in your 500km Radius'
+}
+
+function fetch_event_details(id,ascii1,ascii2){
+    var eventdata = {
+        id: id,
+        type: String.fromCharCode(ascii1) + String.fromCharCode(ascii2),
+    };
+    
+    //ajax is used here to send data from js to python flask
+    $.ajax({
+        url: "/processing", 
+        type: 'POST',       
+        contentType: 'application/json', 
+        data: JSON.stringify(eventdata), 
+        //response is sent from python as a response by jsonify
+        success: function(response) {
+            console.log('Data sent successfully:', response);
+            window.location.href = '/more_info';
+            //here new path is created in success attribute
+        },
+        error: function(error) {
+            console.log('Error:', error);
+        }
+    });
 }

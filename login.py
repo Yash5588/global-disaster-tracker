@@ -1,4 +1,3 @@
-
 from flask import Flask,render_template,jsonify,redirect,request,url_for
 from flask import Blueprint,current_app
 import mysql.connector
@@ -87,6 +86,7 @@ def login_check():
 
     for i in range(len(disaster_longitudes)):
         distance = calculate_distance(user_latitude,user_longitude,disaster_latitudes[i],disaster_longitudes[i])
+        distance = round(distance)
         print('country name =',data['country_names'][i])
         print("user latitude =",user_latitude)
         print("user longitude =",user_longitude)
@@ -114,5 +114,44 @@ def login_check():
     print(len(data['latitude']))
 
     email = email[0][0]
+    #data to send to gmail
+    gmail_subject = "The Disasters Which Are In 10km Radius Around You"
+
+    
+    distances = data['user_disaster_distance']['distance']
+    indices = data['user_disaster_distance']['data_index']
+
+    under_10km_indices = []
+    
+    for i in range(len(distances)):
+        if distances[i] > 10:
+            break
+        under_10km_indices.append(indices[i])
+    
+    gmail_body = f'ALERT!!!! \n\n There are a total of {len(under_10km_indices)} disasters in your 10km radius\n\n'
+
+    for i in range(len(under_10km_indices)):
+        if(i == 0):
+            gmail_body += f'1st nearst disaster is at a distance of {distances[0]}km\n'
+        elif(i == 1):
+            gmail_body += f'2nd nearst disaster is at a distance of {distances[1]}km\n'
+        elif(i == 2):
+            gmail_body += f'3rd nearst disaster is at a distance of {distances[2]}km\n'
+        else:
+            gmail_body += f'{i+1}th nearst disaster is at a distance of {distances[i]}km\n'
         
+        j = under_10km_indices[i]
+        gmail_body += data['disaster_names'][j] + '\n'
+        gmail_body += 'Latitude:  ' + str(data['latitude'][j]) + '\nLongitude:  ' + str(data['longitude'][j]) + '\n'
+        gmail_body += 'Severity:  ' + data['severity_text'][j] + '\n'
+        gmail_body += 'Alert Level:  ' + data['alert_level'][j] + '\n'
+        gmail_body += data['exact_description'][j] + '\n\n'
+
+    gmail_sender = "disastertracker777@gmail.com"
+    gmail_recipient = email
+    gmail_password = "orhd ubgo vxhy pewi"
+
+    send_email(gmail_subject,gmail_body,gmail_sender,gmail_recipient,gmail_password)
+
+    
     return redirect(url_for('nearest_disasters'))
