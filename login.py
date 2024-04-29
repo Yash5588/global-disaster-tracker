@@ -128,24 +128,30 @@ def login_check():
             break
         under_10km_indices.append(indices[i])
     
-    gmail_body = f'ALERT!!!! \n\n There are a total of {len(under_10km_indices)} disasters in your 10km radius\n\n'
+    gmail_body = ''
+    
+    if len(under_10km_indices) == 0:
+        gmail_body += 'SAFE\n\n There are no disasters currently around you within 10km radius'
+    
+    else:
+        gmail_body += f'!!!ALERT!!! \n\n There are a total of {len(under_10km_indices)} disasters in your 10km radius\n\n'
 
-    for i in range(len(under_10km_indices)):
-        if(i == 0):
-            gmail_body += f'1st nearst disaster is at a distance of {distances[0]}km\n'
-        elif(i == 1):
-            gmail_body += f'2nd nearst disaster is at a distance of {distances[1]}km\n'
-        elif(i == 2):
-            gmail_body += f'3rd nearst disaster is at a distance of {distances[2]}km\n'
-        else:
-            gmail_body += f'{i+1}th nearst disaster is at a distance of {distances[i]}km\n'
-        
-        j = under_10km_indices[i]
-        gmail_body += data['disaster_names'][j] + '\n'
-        gmail_body += 'Latitude:  ' + str(data['latitude'][j]) + '\nLongitude:  ' + str(data['longitude'][j]) + '\n'
-        gmail_body += 'Severity:  ' + data['severity_text'][j] + '\n'
-        gmail_body += 'Alert Level:  ' + data['alert_level'][j] + '\n'
-        gmail_body += data['exact_description'][j] + '\n\n'
+        for i in range(len(under_10km_indices)):
+            if(i == 0):
+                gmail_body += f'1st nearst disaster is at a distance of {distances[0]}km\n'
+            elif(i == 1):
+                gmail_body += f'2nd nearst disaster is at a distance of {distances[1]}km\n'
+            elif(i == 2):
+                gmail_body += f'3rd nearst disaster is at a distance of {distances[2]}km\n'
+            else:
+                gmail_body += f'{i+1}th nearst disaster is at a distance of {distances[i]}km\n'
+            
+            j = under_10km_indices[i]
+            gmail_body += data['disaster_names'][j] + '\n'
+            gmail_body += 'Latitude:  ' + str(data['latitude'][j]) + '\nLongitude:  ' + str(data['longitude'][j]) + '\n'
+            gmail_body += 'Severity:  ' + data['severity_text'][j] + '\n'
+            gmail_body += 'Alert Level:  ' + data['alert_level'][j] + '\n'
+            gmail_body += data['exact_description'][j] + '\n\n'
 
     gmail_sender = "disastertracker777@gmail.com"
     gmail_recipient = email
@@ -153,5 +159,4 @@ def login_check():
 
     send_email(gmail_subject,gmail_body,gmail_sender,gmail_recipient,gmail_password)
 
-    
     return redirect(url_for('nearest_disasters'))
