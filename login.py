@@ -4,6 +4,7 @@ import mysql.connector
 import math
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 login_bp = Blueprint('login',__name__)
 
@@ -19,13 +20,18 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
 #function to send gmail
 def send_email(subject, body, sender, recipients, password):
-    msg = MIMEText(body)
+    msg = MIMEMultipart()
+
     msg['Subject'] = subject
     msg['From'] = sender
-    msg['To'] = ','.join(recipients)
+    msg['To'] = recipients
+
+    msg.attach(MIMEText(body,'html'))
+    
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+       #smtp_server.starttls()
        smtp_server.login(sender, password)
-       smtp_server.sendmail(sender, recipients, msg.as_string())
+       smtp_server.sendmail(sender,recipients,msg.as_string())
     print("Message sent!")
 
 
@@ -115,7 +121,7 @@ def login_check():
 
     email = email[0][0]
     #data to send to gmail
-    gmail_subject = "The Disasters Which Are In 10km Radius Around You"
+    gmail_subject = 'The Disasters Which Are In 10km Radius Around You'
 
     
     distances = data['user_disaster_distance']['distance']
@@ -128,10 +134,14 @@ def login_check():
             break
         under_10km_indices.append(indices[i])
     
-    gmail_body = ''
+    gmail_body = '''<html>
+                    <head>
+                       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                    </head>
+                    <body>'''
     
     if len(under_10km_indices) == 0:
-        gmail_body += 'SAFE\n\n There are no disasters currently around you within 10km radius'
+        gmail_body = 'SAFE\n\n There are no disasters currently around you within 10km radius'
     
     else:
         gmail_body += f'!!!ALERT!!! \n\n There are a total of {len(under_10km_indices)} disasters in your 10km radius\n\n'
@@ -147,11 +157,14 @@ def login_check():
                 gmail_body += f'{i+1}th nearst disaster is at a distance of {distances[i]}km\n'
             
             j = under_10km_indices[i]
-            gmail_body += data['disaster_names'][j] + '\n'
-            gmail_body += 'Latitude:  ' + str(data['latitude'][j]) + '\nLongitude:  ' + str(data['longitude'][j]) + '\n'
-            gmail_body += 'Severity:  ' + data['severity_text'][j] + '\n'
-            gmail_body += 'Alert Level:  ' + data['alert_level'][j] + '\n'
-            gmail_body += data['exact_description'][j] + '\n\n'
+            gmail_body += f"<h1> {data['disaster_names'][j]} </h1>"
+            gmail_body += f"<h2> Latitude: {str(data['latitude'][j])} </h2>"
+            gmail_body += f"<h2> Longitude: {str(data['longitude'][j])} </h2>"
+            gmail_body += f"<h2> Severity: {data['severity_text'][j]} </h2>"
+            gmail_body += f"<h2> Alert Level: {data['alert_level'][j]} </h2>"
+            gmail_body += f"<p> {data['exact_description'][j]} </p>"
+        
+        gmail_body += "</body> </html>"
 
     gmail_sender = "disastertracker777@gmail.com"
     gmail_recipient = email
