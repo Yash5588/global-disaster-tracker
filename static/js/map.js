@@ -1,15 +1,17 @@
  // Initialize and add the map
- function initMap() {
+ async function initMap() {
     var map;
     var bounds = new google.maps.LatLngBounds();
     var mapOptions = {
         mapTypeId: 'hybrid',
         center: {lat: -34.397, lng: 150.644},
-        zoom: 8
+        zoom: 8,
+        mapId : "DEMO_MAP_ID"
     };
-                    
+    const { Map } = await google.maps.importLibrary("maps");
+
     // Display a map on the web page
-    map = new google.maps.Map(document.getElementById("mapCanvas"), mapOptions);
+    map = new Map(document.getElementById("mapCanvas"), mapOptions);
     map.setTilt(45);
 
     var latitude = flaskData.latitude;
@@ -69,10 +71,15 @@
     for( i = 0; i < markers.length; i++ ) {
         var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
         bounds.extend(position);
-        marker = new google.maps.Marker({
+
+        const disaster_icon = document.createElement('img');
+        disaster_icon.src = icon[i];
+
+        marker = new google.maps.marker.AdvancedMarkerElement({
+            map,
             position: position,
-            map: map,
-            icon : icon[i],
+            //icon : icon[i],
+            content : disaster_icon,
             title: markers[i][0]
         });
         // Add info window to 

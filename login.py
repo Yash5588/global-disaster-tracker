@@ -136,35 +136,37 @@ def login_check():
     
     gmail_body = '''<html>
                     <head>
-                       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                    <style>
+                        .space {
+                            white-space: pre;
+                          }
+                    </style>
                     </head>
                     <body>'''
     
     if len(under_10km_indices) == 0:
-        gmail_body = 'SAFE\n\n There are no disasters currently around you within 10km radius'
+        gmail_body = '<h1> SAFE\n\n There are no disasters currently around you within 10km radius </h1>'
     
     else:
-        gmail_body += f'!!!ALERT!!! \n\n There are a total of {len(under_10km_indices)} disasters in your 10km radius\n\n'
+        gmail_body += f'<h1> !!!ALERT!!! <br> There are a total of {len(under_10km_indices)} disasters in your 10km radius </h1>'
 
         for i in range(len(under_10km_indices)):
-            if(i == 0):
-                gmail_body += f'1st nearst disaster is at a distance of {distances[0]}km\n'
-            elif(i == 1):
-                gmail_body += f'2nd nearst disaster is at a distance of {distances[1]}km\n'
-            elif(i == 2):
-                gmail_body += f'3rd nearst disaster is at a distance of {distances[2]}km\n'
-            else:
-                gmail_body += f'{i+1}th nearst disaster is at a distance of {distances[i]}km\n'
             
             j = under_10km_indices[i]
-            gmail_body += f"<h1> {data['disaster_names'][j]} </h1>"
-            gmail_body += f"<h2> Latitude: {str(data['latitude'][j])} </h2>"
-            gmail_body += f"<h2> Longitude: {str(data['longitude'][j])} </h2>"
-            gmail_body += f"<h2> Severity: {data['severity_text'][j]} </h2>"
-            gmail_body += f"<h2> Alert Level: {data['alert_level'][j]} </h2>"
-            gmail_body += f"<p> {data['exact_description'][j]} </p>"
+            gmail_body += f'''<div class = "gmail_content">
+                                <h2> {i+1}) {data['disaster_names'][j]} </h2>
+                                <h3 class = "space"> LATITUDE :    {str(data['latitude'][j])}     LONGITUDE :    {str(data['longitude'][j])} </h3>
+                                <h3 class = "space"> DISTANCE FROM YOUR LOCATION :    {distances[i]}km  </h3>
+                                <h3 class = "space"> SEVERITY :    {data['severity_text'][j]} </h3>
+                                <h3 class = "space"> ALERT LEVEL :    {data['alert_level'][j]} </h3>
+                                <h3 class = "space"> {data['exact_description'][j]} </h3>
+                                <br>
+                                <br>
+                              </div>'''
         
-        gmail_body += "</body> </html>"
+        gmail_body += '''
+        </body>
+        </html>'''
 
     gmail_sender = "disastertracker777@gmail.com"
     gmail_recipient = email
