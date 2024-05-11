@@ -148,7 +148,10 @@ def login_check():
         gmail_body = '<h1> SAFE\n\n There are no disasters currently around you within 10km radius </h1>'
     
     else:
-        gmail_body += f'<h1> !!!ALERT!!! <br> There are a total of {len(under_10km_indices)} disasters in your 10km radius </h1>'
+        if len(under_10km_indices) == 1:
+            gmail_body += f'<h1> !!!ALERT!!! <br> There is a disaster in your 10km radius </h1>'
+        else:
+            gmail_body += f'<h1> !!!ALERT!!! <br> There are a total of {len(under_10km_indices)} disasters in your 10km radius </h1>'
 
         for i in range(len(under_10km_indices)):
             
