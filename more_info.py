@@ -92,8 +92,8 @@ def more_info():
             if(details['@id'] == 'overview_map_cached'):
                 details['gdacs:description'] = "This overview map provides a comprehensive depiction of the recent volcanic eruption, capturing critical information to aid in understanding the extent and impact of the event."
                 eruption_images.append(details)
-
-        eruption_images[0]['@url'] = eruption_images[0]['@url'][:-5] + '2' + eruption_images[0]['@url'][-4:]
+        if(len(eruption_images) != 0):
+            eruption_images[0]['@url'] = eruption_images[0]['@url'][:-5] + '2' + eruption_images[0]['@url'][-4:]
 
         return render_template('eruption_info.html',event = event,eruption_images = eruption_images)
     
