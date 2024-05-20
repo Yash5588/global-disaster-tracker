@@ -3,6 +3,7 @@ from flask import Blueprint,current_app
 import mysql.connector
 import math
 import smtplib
+import google.generativeai as genai
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -144,6 +145,10 @@ def login_check():
                     </head>
                     <body>'''
     
+    genai.configure(api_key='AIzaSyA7HgBym8amisAYJxm6FgitUJKCnvwdLnc')
+
+    model = genai.GenerativeModel('gemini-pro')
+
     if len(under_10km_indices) == 0:
         gmail_body = '<h1> SAFE\n\n There are no disasters currently around you within 10km radius </h1>'
     
@@ -156,16 +161,39 @@ def login_check():
         for i in range(len(under_10km_indices)):
             
             j = under_10km_indices[i]
+
+            response = model.generate_content(f'Generate the city whose coordinates are latitude : {str(data['latitude'][j])}  longitude : {str(data['longitude'][j])}')
+            city = response.text
+            city = city.replace('*','')
+
+            if i == 0:
+                response = model.generate_content(f'''There is a {data['disaster_names'][j]} whose coordinates are Latitude : {str(data['latitude'][j])} and longitude : {str(data['longitude'][j])}
+                and it is at a distance of {distances[i]}km from my current location and the severity of the disaster is {data['severity_text'][j]}
+                and a {data['alert_level'][j]} is issued
+                Now generate 5 best suited survival precautions for me so that i can escape from this disaster
+                suggest places where i can evacuate near me along with the distance of that place which is less than the distance of the disaster so that
+                i can be safe also generate contact numbers so that i can contact for help near me in case of emergency''')
+
+                precaution = response.text
+
+                precaution = precaution.replace('*','')
+
+                print(precaution)
+
             gmail_body += f'''<div class = "gmail_content">
-                                <h2> {i+1}) {data['disaster_names'][j]} </h2>
-                                <h3 class = "space"> LATITUDE :    {str(data['latitude'][j])}     LONGITUDE :    {str(data['longitude'][j])} </h3>
+                                <h2> {i+1}) {data['disaster_names'][j]}({city}) </h2>
+                                <h3 class = "space"> CITY : {city} </h3>
                                 <h3 class = "space"> DISTANCE FROM YOUR LOCATION :    {distances[i]}km  </h3>
                                 <h3 class = "space"> SEVERITY :    {data['severity_text'][j]} </h3>
                                 <h3 class = "space"> ALERT LEVEL :    {data['alert_level'][j]} </h3>
                                 <h3 class = "space"> {data['exact_description'][j]} </h3>
-                                <br>
-                                <br>
-                              </div>'''
+                                <br>'''
+            if i==0:
+                    gmail_body += f'''<h3 class = "space"> {precaution} </h3>'''
+
+            gmail_body += '''<br>
+                             <br>
+                             </div>'''
         
         gmail_body += '''
         </body>
