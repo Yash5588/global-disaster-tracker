@@ -94,12 +94,12 @@ def login_check():
     for i in range(len(disaster_longitudes)):
         distance = calculate_distance(user_latitude,user_longitude,disaster_latitudes[i],disaster_longitudes[i])
         distance = round(distance)
-        print('country name =',data['country_names'][i])
-        print("user latitude =",user_latitude)
-        print("user longitude =",user_longitude)
-        print("disaster latitude =",disaster_latitudes[i])
-        print("disaster longitude =",disaster_longitudes[i])
-        print("distance =",distance)
+        # print('country name =',data['country_names'][i])
+        # print("user latitude =",user_latitude)
+        # print("user longitude =",user_longitude)
+        # print("disaster latitude =",disaster_latitudes[i])
+        # print("disaster longitude =",disaster_longitudes[i])
+        # print("distance =",distance)
         data['user_disaster_distance']['data_index'].append(i)
         data['user_disaster_distance']['distance'].append(distance)
         print()
@@ -115,10 +115,10 @@ def login_check():
     data['user_disaster_distance']['data_index'] = list(data['user_disaster_distance']['data_index'])
     data['user_disaster_distance']['distance'] = list(data['user_disaster_distance']['distance'])
 
-    print(data)
-    print(len(data['latitude']))
-    print(len(data['user_disaster_distance']['data_index']))
-    print(len(data['latitude']))
+    # print(data)
+    # print(len(data['latitude']))
+    # print(len(data['user_disaster_distance']['data_index']))
+    # print(len(data['latitude']))
 
     email = email[0][0]
     #data to send to gmail

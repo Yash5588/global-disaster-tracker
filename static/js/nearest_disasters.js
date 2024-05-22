@@ -30,7 +30,6 @@ var flag_100km = false;
 var flag_200km = false;
 var flag_500km = false;
 
-
 for(let i=0;i<latitude.length;i++){
     var j = data_indices[i];
     var event_info = '<button class = "btn btn-success" onclick = "fetch_event_details({eventid},{letter1},{letter2})"> Get More Info </button>';

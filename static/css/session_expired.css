@@ -1,0 +1,41 @@
+body{
+    background-color: #dee2e6;
+}
+
+.navbar {
+    background-color: #343a40 !important; /* Dark background for navbar */
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.nav-link:hover {
+    color: #ffffff !important;
+}
+
+.dropdown-menu:hover {
+    background-color: #343a40;
+}
+
+.dropdown-item:hover {
+    color: #494545 !important; 
+}
+
+nav {
+    background-color: #212529;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.session_items {
+    text-align: center;
+    margin: 200px;
+}

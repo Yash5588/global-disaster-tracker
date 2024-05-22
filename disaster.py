@@ -8,6 +8,7 @@ import mysql.connector
 import webbrowser
 import smtplib
 from email.mime.text import MIMEText
+from apscheduler.schedulers.background import BackgroundScheduler
 from sign_up import sign_up_bp
 from login import login_bp
 from more_info import more_info_bp
@@ -30,8 +31,14 @@ app.register_blueprint(sign_up_bp)
 app.register_blueprint(login_bp,data = data)
 app.register_blueprint(more_info_bp)
 
-@app.route('/')
-def info():
+def periodic_task():
+    for attributes in data:
+        if attributes != 'user_disaster_distance':
+            data[attributes] = []
+        else:
+            data['user_disaster_distance']['data_index'] = []
+            data['user_disaster_distance']['distance'] = []
+        
     try:
         client = GDACSAPIReader()
         geojson_obj = client.latest_events()
@@ -51,49 +58,51 @@ def info():
     
     disaster_count_pie_chart = {}
     for feature in geojson_obj.features:
-        print('type = ',feature['type'])
+        #print('type = ',feature['type'])
         geometry = feature['geometry']
         
-        print('type = ',geometry['type'])
+        #print('type = ',geometry['type'])
         
-        print('coordinates = ',geometry['coordinates'][0],geometry['coordinates'][1])
+        #print('coordinates = ',geometry['coordinates'][0],geometry['coordinates'][1])
         data['longitude'].append(geometry['coordinates'][0])
         data['latitude'].append(geometry['coordinates'][1])
         
+        #i have used this genai is to generate city using latitude and longitude
+
         properties = feature['properties']
         
-        print('name = ',properties['name'])
+        #print('name = ',properties['name'])
         disaster_name = properties['name']
         
-        print('description = ',properties['description'])
+        #print('description = ',properties['description'])
         description = properties['description']
         description = description.split(' ')
         data['legend_icon_names'].append(description[0].split(' ')[0])
 
 
-        print('exact description = ',properties['htmldescription'])
+        #print('exact description = ',properties['htmldescription'])
         data['exact_description'].append(properties['htmldescription'])
         
-        print('icon = ',properties['icon'])
+        #print('icon = ',properties['icon'])
         
-        print('iconoverall = ',properties['iconoverall'])
+        #print('iconoverall = ',properties['iconoverall'])
         data['icon'].append(properties['iconoverall'])
 
-        print('eventtype = ',properties['eventtype'])
+        #print('eventtype = ',properties['eventtype'])
         data['event_type'].append(properties['eventtype'])
 
-        print('eventid = ',properties['eventid'])
+        #print('eventid = ',properties['eventid'])
         data['event_id'].append(properties['eventid'])
         
         url = properties['url']
-        print('url geometry = ',url['geometry'])
-        print('report = ',url['report'])
-        print('details = ',url['details'])
+        #print('url geometry = ',url['geometry'])
+        #print('report = ',url['report'])
+        #print('details = ',url['details'])
         
-        print('alert level = ',properties['alertlevel'])
+        #print('alert level = ',properties['alertlevel'])
         data['alert_level'].append(properties['alertlevel'])
         alert_level = properties['alertlevel']
-        print(len(alert_level))
+        #print(len(alert_level))
 
         if 'Green' in alert_level:
             data['alert_color'].append('bg-success')
@@ -107,14 +116,14 @@ def info():
             data['alert_color'].append('bg-danger')
             disaster_alert_count[description[0]]['red'] += 1
         
-        print('alert score = ',properties['alertscore'])
-        print('episode alert level = ',properties['episodealertlevel'])
-        print('episode alert score = ',properties['episodealertscore'])
-        print('is temporary = ',properties['istemporary'])
-        print('is current = ',properties['iscurrent'])
+        # print('alert score = ',properties['alertscore'])
+        # print('episode alert level = ',properties['episodealertlevel'])
+        # print('episode alert score = ',properties['episodealertscore'])
+        # print('is temporary = ',properties['istemporary'])
+        # print('is current = ',properties['iscurrent'])
         data['is_current'].append(properties['iscurrent'])
         
-        print('country = ',properties['country'])
+        #print('country = ',properties['country'])
         country = properties['country']
         if(len(country) == 0):
             country = "OffShore"
@@ -123,28 +132,28 @@ def info():
         data['country_names'].append(country)
         data['disaster_names'].append(disaster_name)
         
-        print('from date = ',properties['fromdate'])
+        #print('from date = ',properties['fromdate'])
         date_time = properties['fromdate'].split('T')
         data['from_date'].append(date_time[0])
         data['time'].append(date_time[1])
 
-        print('to date = ',properties['todate'])
-        print('date modified = ',properties['datemodified'])
-        print('iso3 = ',properties['iso3'])
-        print('source = ',properties['source'])
-        print('source id = ',properties['sourceid'])
-        print('polygon label = ',properties['polygonlabel'])
-        print('class = ',properties['Class'])
-        print('the affected countries are')
-        for countries in properties['affectedcountries']:
-            print('iso3 = ',countries['iso3'])
-            print('countryname = ',countries['countryname'])
+        # print('to date = ',properties['todate'])
+        # print('date modified = ',properties['datemodified'])
+        # print('iso3 = ',properties['iso3'])
+        # print('source = ',properties['source'])
+        # print('source id = ',properties['sourceid'])
+        # print('polygon label = ',properties['polygonlabel'])
+        # print('class = ',properties['Class'])
+        # print('the affected countries are')
+        # for countries in properties['affectedcountries']:
+        #     print('iso3 = ',countries['iso3'])
+        #     print('countryname = ',countries['countryname'])
         severitydata = properties['severitydata']
-        print('severity = ',severitydata['severity'])
-        print('severity text = ',severitydata['severitytext'])
+        # print('severity = ',severitydata['severity'])
+        # print('severity text = ',severitydata['severitytext'])
         data['severity_text'].append(severitydata['severitytext'])
-        print('severity unit = ',severitydata['severityunit'])
-        print('\n\n')
+        # print('severity unit = ',severitydata['severityunit'])
+        # print('\n\n')
     
     
     disaster_count = Counter(data['legend_icon_names'])
@@ -242,9 +251,11 @@ def info():
 
     pie_figure.write_html('templates/pie_chart.html')
     bar_figure.write_html('templates/bar_graph.html')
-    print(type(data['event_id'][0]))
-    print(len(data['latitude']))
     print(len(data['disaster_names']))
+
+periodic_task()
+@app.route('/')
+def info():
     return redirect(url_for('home_page'))
 
 @app.route('/map')
@@ -265,7 +276,18 @@ def home_page():
 
 @app.route('/nearest_disasters')
 def nearest_disasters():
+    if len(data['user_disaster_distance']['data_index']) == 0:
+        return render_template("session_expired.html")
     return render_template('nearest_disasters.html',data = data)
 
+scheduler = BackgroundScheduler()
+scheduler.add_job(func = periodic_task,trigger = 'interval',seconds = 60)
+scheduler.start()
+
 webbrowser.open('http://127.0.0.1:5000')
-app.run(debug = True)
+
+if __name__ == '__main__':
+    #try:
+        app.run()
+    # except (KeyboardInterrupt, SystemExit):
+    #     scheduler.shutdown()
