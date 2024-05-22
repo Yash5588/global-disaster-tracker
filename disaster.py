@@ -281,7 +281,7 @@ def nearest_disasters():
     return render_template('nearest_disasters.html',data = data)
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func = periodic_task,trigger = 'interval',seconds = 60)
+scheduler.add_job(func = periodic_task,trigger = 'interval',hours = 12)
 scheduler.start()
 
 webbrowser.open('http://127.0.0.1:5000')
