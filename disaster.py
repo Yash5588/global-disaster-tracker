@@ -284,10 +284,10 @@ scheduler = BackgroundScheduler()
 scheduler.add_job(func = periodic_task,trigger = 'interval',hours = 12)
 scheduler.start()
 
-webbrowser.open('http://127.0.0.1:5000')
+# webbrowser.open('http://127.0.0.1:5000')
 
-if __name__ == '__main__':
-    #try:
-        app.run()
-    # except (KeyboardInterrupt, SystemExit):
-    #     scheduler.shutdown()
+# if __name__ == '__main__':
+#     #try:
+#         app.run()
+#     # except (KeyboardInterrupt, SystemExit):
+#     #     scheduler.shutdown()

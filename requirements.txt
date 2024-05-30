@@ -1,0 +1,7 @@
+flask
+gunicorn
+plotly
+pandas
+mysql-connector
+appscheduler
+smtplib
