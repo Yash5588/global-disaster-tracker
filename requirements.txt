@@ -4,4 +4,4 @@ plotly
 pandas
 mysql-connector
 apscheduler
-smtplib
+google-generativeai
