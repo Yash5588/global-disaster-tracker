@@ -3,5 +3,5 @@ gunicorn
 plotly
 pandas
 mysql-connector
-appscheduler
+apscheduler
 smtplib
