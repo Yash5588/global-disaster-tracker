@@ -12,6 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sign_up import sign_up_bp
 from login import login_bp
 from more_info import more_info_bp
+import os
 
 
 app = Flask(__name__,template_folder="templates")
@@ -43,8 +44,9 @@ def periodic_task():
         client = GDACSAPIReader()
         geojson_obj = client.latest_events()
     except GDACSAPIError as error:
-        return render_template('error.html',error = error)
-
+        print(f"Error fetching GDACS data: {error}")
+        return  # Just return instead of trying to render template
+        
     disaster_count = {}
     
     disaster_alert_count = {'Earthquake' : {'green' : 0,'orange' : 0,'red' : 0},
@@ -58,72 +60,36 @@ def periodic_task():
     
     disaster_count_pie_chart = {}
     for feature in geojson_obj.features:
-        #print('type = ',feature['type'])
         geometry = feature['geometry']
-        
-        #print('type = ',geometry['type'])
-        
-        #print('coordinates = ',geometry['coordinates'][0],geometry['coordinates'][1])
         data['longitude'].append(geometry['coordinates'][0])
         data['latitude'].append(geometry['coordinates'][1])
-        
-        #i have used this genai is to generate city using latitude and longitude
 
         properties = feature['properties']
-        
-        #print('name = ',properties['name'])
         disaster_name = properties['name']
-        
-        #print('description = ',properties['description'])
         description = properties['description']
         description = description.split(' ')
         data['legend_icon_names'].append(description[0].split(' ')[0])
 
-
-        #print('exact description = ',properties['htmldescription'])
         data['exact_description'].append(properties['htmldescription'])
-        
-        #print('icon = ',properties['icon'])
-        
-        #print('iconoverall = ',properties['iconoverall'])
         data['icon'].append(properties['iconoverall'])
-
-        #print('eventtype = ',properties['eventtype'])
         data['event_type'].append(properties['eventtype'])
-
-        #print('eventid = ',properties['eventid'])
         data['event_id'].append(properties['eventid'])
         
-        url = properties['url']
-        #print('url geometry = ',url['geometry'])
-        #print('report = ',url['report'])
-        #print('details = ',url['details'])
-        
-        #print('alert level = ',properties['alertlevel'])
         data['alert_level'].append(properties['alertlevel'])
         alert_level = properties['alertlevel']
-        #print(len(alert_level))
 
         if 'Green' in alert_level:
             data['alert_color'].append('bg-success')
             disaster_alert_count[description[0]]['green'] += 1
-
         elif 'Orange' in alert_level:
             data['alert_color'].append('bg-warning')
             disaster_alert_count[description[0]]['orange'] += 1
-        
         else:
             data['alert_color'].append('bg-danger')
             disaster_alert_count[description[0]]['red'] += 1
         
-        # print('alert score = ',properties['alertscore'])
-        # print('episode alert level = ',properties['episodealertlevel'])
-        # print('episode alert score = ',properties['episodealertscore'])
-        # print('is temporary = ',properties['istemporary'])
-        # print('is current = ',properties['iscurrent'])
         data['is_current'].append(properties['iscurrent'])
         
-        #print('country = ',properties['country'])
         country = properties['country']
         if(len(country) == 0):
             country = "OffShore"
@@ -132,60 +98,46 @@ def periodic_task():
         data['country_names'].append(country)
         data['disaster_names'].append(disaster_name)
         
-        #print('from date = ',properties['fromdate'])
         date_time = properties['fromdate'].split('T')
         data['from_date'].append(date_time[0])
         data['time'].append(date_time[1])
 
-        # print('to date = ',properties['todate'])
-        # print('date modified = ',properties['datemodified'])
-        # print('iso3 = ',properties['iso3'])
-        # print('source = ',properties['source'])
-        # print('source id = ',properties['sourceid'])
-        # print('polygon label = ',properties['polygonlabel'])
-        # print('class = ',properties['Class'])
-        # print('the affected countries are')
-        # for countries in properties['affectedcountries']:
-        #     print('iso3 = ',countries['iso3'])
-        #     print('countryname = ',countries['countryname'])
         severitydata = properties['severitydata']
-        # print('severity = ',severitydata['severity'])
-        # print('severity text = ',severitydata['severitytext'])
         data['severity_text'].append(severitydata['severitytext'])
-        # print('severity unit = ',severitydata['severityunit'])
-        # print('\n\n')
-    
     
     disaster_count = Counter(data['legend_icon_names'])
     data['disaster_type'] = data['legend_icon_names']
     data['legend_icon_names'] = list(set(data['legend_icon_names']))
+    
+    # Fix the icon paths to use the correct alert level
     baselink = "https://www.gdacs.org/images/gdacs_icons/maps/"
     for i in range(len(data['legend_icon_names'])):
-        if data['legend_icon_names'][i] == 'Flood':
+        disaster_type = data['legend_icon_names'][i]
+        # Get the alert level for this disaster type
+        alert_level = "Green"  # Default to Green if not found
+        for j in range(len(data['disaster_type'])):
+            if data['disaster_type'][j] == disaster_type:
+                alert_level = data['alert_level'][j]
+                break
+                
+        if disaster_type == 'Flood':
             data['legend_icon_pics'].append(baselink + alert_level + "/FL.png")
-
-        elif data['legend_icon_names'][i] == 'Earthquake':
+        elif disaster_type == 'Earthquake':
             data['legend_icon_pics'].append(baselink + alert_level + "/EQ.png")
-
-        elif data['legend_icon_names'][i] == 'Forest':
+        elif disaster_type == 'Forest':
             data['legend_icon_pics'].append(baselink + alert_level + "/WF.png")
             data['legend_icon_names'][i] += ' fires'
-        
-        elif data['legend_icon_names'][i] == 'Tropical':
+        elif disaster_type == 'Tropical':
             data['legend_icon_pics'].append(baselink + alert_level + "/TC.png")
             data['legend_icon_names'][i] += ' Cyclone'
-        
-        elif data['legend_icon_names'][i] == 'Tsunami':
+        elif disaster_type == 'Tsunami':
             data['legend_icon_pics'].append(baselink + alert_level + "/TS.png")
-
-        elif data['legend_icon_names'][i] == 'Drought':
+        elif disaster_type == 'Drought':
             data['legend_icon_pics'].append(baselink + alert_level + "/DR.png")
-
         else:
-            data['legend_icon_names'][i] = 'Volcano ' + data['legend_icon_names'][i]
+            data['legend_icon_names'][i] = 'Volcano ' + disaster_type
             data['legend_icon_pics'].append(baselink + alert_level + "/VO.png")
-    #event = client.get_event(event_type='WF', event_id='1019383',episode_id = "3")
-    #print(event)
+
     disaster_count_pie_chart['Earthquakes'] = disaster_count['Earthquake']
     disaster_count_pie_chart['Floods'] = disaster_count['Flood']
     disaster_count_pie_chart['Forest Fires'] = disaster_count['Forest']
@@ -194,22 +146,17 @@ def periodic_task():
     disaster_count_pie_chart['Droughts'] = disaster_count['Drought']
     disaster_count_pie_chart['Volcanic Eruptions'] = disaster_count['Eruption']
 
-    #plotting of pie chart
-    pie_chart_colors = ['brown','blue','darkred','grey','darkblue','lightbrown','yellow']
-    pie_figure = go.Figure(
-        data = [
-            go.Pie(
-                labels = list(disaster_count_pie_chart.keys()),
-                values = list(disaster_count_pie_chart.values()),
-                textinfo = "label + percent",
-                insidetextorientation = 'radial',
-                textfont_size = 20,
-                marker=dict(colors=pie_chart_colors)
-            )
-        ]
-    )
-
-    #separating disasters based on their alert level for graph plotting
+    # Plotting of pie chart
+    pie_chart_colors = ['#8B4513', '#3366CC', '#8B0000', '#808080', '#00008B', '#D2B48C', '#FFD700']
+    
+    # Create pie chart data for JavaScript
+    pie_data = {
+        'labels': list(disaster_count_pie_chart.keys()),
+        'values': list(disaster_count_pie_chart.values()),
+        'colors': pie_chart_colors
+    }
+    
+    # Creating different traces of graphs individually for red,orange and green alerts
     green_disasters,orange_disasters,red_disasters = [],[],[]
 
     for disaster_color in disaster_alert_count.values():
@@ -217,43 +164,257 @@ def periodic_task():
         orange_disasters.append(disaster_color['orange'])
         red_disasters.append(disaster_color['red'])
    
-   #creating different traces of graphs individually for red,orange and green alerts
-    green_bar_trace = go.Bar(name = 'green alert level',
-                             x = list(disaster_count_pie_chart.keys()),
-                             y = green_disasters,
-                             text = green_disasters,
-                             marker_color = 'green',
-                             textposition = 'auto')
+    # Create bar graph data for JavaScript
+    bar_data = {
+        'categories': list(disaster_count_pie_chart.keys()),
+        'green': green_disasters,
+        'orange': orange_disasters,
+        'red': red_disasters
+    }
     
-    orange_bar_trace = go.Bar(name = 'orange alert level',
-                              x = list(disaster_count_pie_chart.keys()),
-                              y = orange_disasters,
-                              text = orange_disasters,
-                              marker_color = 'darkorange',
-                              textposition = "auto")
-    
-    red_bar_trace = go.Bar(name = 'red alert level',
-                           x = list(disaster_count_pie_chart.keys()),
-                           y = red_disasters,
-                           text = red_disasters,
-                           marker_color = 'red',
-                           textposition = 'auto')
-    #crearing layout mainly for x and y axis titles
-    layout = go.Layout(
-        title = "Graph for Disasters Occuring currently",
-        xaxis = dict(title = "Disasters"),
-        yaxis = dict(title = "Count")
-    )
-    
-    #plotting of bar graph and pie chart bar graph is of stack type
-    bar_figure = go.Figure(data = [green_bar_trace,orange_bar_trace,red_bar_trace],layout=layout)
-    bar_figure.update_layout(barmode = 'stack')
+    try:
+        # Use absolute paths for saving files
+        templates_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+        
+        # Generate enhanced pie chart HTML
+        pie_html = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Global Disaster Distribution</title>
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            <style>
+                body {{
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    background-color: #f5f5f5;
+                }}
+                .chart-container {{
+                    width: 90%;
+                    max-width: 900px;
+                    margin: 20px auto;
+                    background-color: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                }}
+                h1 {{
+                    text-align: center;
+                    color: #333;
+                    margin-bottom: 30px;
+                }}
+                .chart-description {{
+                    color: #555;
+                    margin-bottom: 20px;
+                    text-align: center;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="chart-container">
+                <h1>Global Disaster Distribution</h1>
+                <p class="chart-description">Current distribution of global disasters by type</p>
+                <div id="pie-chart"></div>
+            </div>
+            
+            <script>
+                // Pie chart data
+                const pieData = {{
+                    labels: {pie_data['labels']},
+                    values: {pie_data['values']},
+                    colors: {pie_chart_colors}
+                }};
+                
+                // Create the pie chart
+                const pieTrace = {{
+                    type: 'pie',
+                    labels: pieData.labels,
+                    values: pieData.values,
+                    textinfo: 'label+percent',
+                    insidetextorientation: 'radial',
+                    textfont: {{
+                        size: 14
+                    }},
+                    marker: {{
+                        colors: pieData.colors
+                    }},
+                    hoverinfo: 'label+value+percent'
+                }};
+                
+                const pieLayout = {{
+                    showlegend: true,
+                    legend: {{
+                        orientation: 'v',
+                        xanchor: 'center',
+                        yanchor: 'top',
+                        y: -0.1,
+                        x: 0.5
+                    }},
+                    height: 500,
+                    margin: {{
+                        l: 50,
+                        r: 50,
+                        t: 30,
+                        b: 30
+                    }}
+                }};
+                
+                Plotly.newPlot('pie-chart', [pieTrace], pieLayout, {{responsive: true}});
+            </script>
+        </body>
+        </html>
+        """
+        
+        # Generate enhanced bar graph HTML
+        bar_html = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Disaster Alert Levels</title>
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            <style>
+                body {{
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    background-color: #f5f5f5;
+                }}
+                .chart-container {{
+                    width: 90%;
+                    max-width: 900px;
+                    margin: 20px auto;
+                    background-color: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                }}
+                h1 {{
+                    text-align: center;
+                    color: #333;
+                    margin-bottom: 30px;
+                }}
+                .chart-description {{
+                    color: #555;
+                    margin-bottom: 20px;
+                    text-align: center;
+                }}
+                .legend-item {{
+                    display: inline-block;
+                    margin-right: 20px;
+                }}
+                .legend-color {{
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    margin-right: 5px;
+                    vertical-align: middle;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="chart-container">
+                <h1>Disaster Alert Levels</h1>
+                <p class="chart-description">Current distribution of disasters by severity level</p>
+                <div id="bar-chart"></div>
+            </div>
+            
+            <script>
+                // Bar chart data
+                const barData = {{
+                    categories: {list(disaster_count_pie_chart.keys())},
+                    green: {green_disasters},
+                    orange: {orange_disasters},
+                    red: {red_disasters}
+                }};
+                
+                // Green alert bars
+                const greenTrace = {{
+                    x: barData.categories,
+                    y: barData.green,
+                    name: 'Green Alert',
+                    type: 'bar',
+                    marker: {{
+                        color: '#27ae60',
+                        opacity: 0.9
+                    }},
+                    hovertemplate: '<b>%{{x}}</b><br>Green alerts: %{{y}}<extra></extra>'
+                }};
+                
+                // Orange alert bars
+                const orangeTrace = {{
+                    x: barData.categories,
+                    y: barData.orange,
+                    name: 'Orange Alert',
+                    type: 'bar',
+                    marker: {{
+                        color: '#e67e22',
+                        opacity: 0.9
+                    }},
+                    hovertemplate: '<b>%{{x}}</b><br>Orange alerts: %{{y}}<extra></extra>'
+                }};
+                
+                // Red alert bars
+                const redTrace = {{
+                    x: barData.categories,
+                    y: barData.red,
+                    name: 'Red Alert',
+                    type: 'bar',
+                    marker: {{
+                        color: '#c0392b',
+                        opacity: 0.9
+                    }},
+                    hovertemplate: '<b>%{{x}}</b><br>Red alerts: %{{y}}<extra></extra>'
+                }};
+                
+                const layout = {{
+                    title: 'Disasters by Alert Level',
+                    barmode: 'stack',
+                    xaxis: {{
+                        title: 'Disaster Types',
+                        tickangle: -45
+                    }},
+                    yaxis: {{
+                        title: 'Number of Disasters'
+                    }},
+                    legend: {{
+                        orientation: 'h',
+                        yanchor: 'bottom',
+                        y: 1.02,
+                        xanchor: 'center',
+                        x: 0.5
+                    }},
+                    margin: {{
+                        b: 100
+                    }},
+                    hovermode: 'closest'
+                }};
+                
+                Plotly.newPlot('bar-chart', [greenTrace, orangeTrace, redTrace], layout, {{responsive: true}});
+            </script>
+        </body>
+        </html>
+        """
+        
+        # Save the HTML files
+        with open(os.path.join(templates_dir, 'pie_chart.html'), 'w') as f:
+            f.write(pie_html)
+            
+        with open(os.path.join(templates_dir, 'bar_graph.html'), 'w') as f:
+            f.write(bar_html)
+            
+        print(f"Successfully updated charts with enhanced UI. Total disasters: {len(data['disaster_names'])}")
+    except Exception as e:
+        print(f"Error saving chart files: {e}")
+        import traceback
+        print(traceback.format_exc())
 
-    pie_figure.write_html('templates/pie_chart.html')
-    bar_figure.write_html('templates/bar_graph.html')
-    print(len(data['disaster_names']))
-
-periodic_task()
+periodic_task()  # Initial data fetch
 @app.route('/')
 def info():
     return redirect(url_for('home_page'))
@@ -280,14 +441,14 @@ def nearest_disasters():
         return render_template("session_expired.html")
     return render_template('nearest_disasters.html',data = data)
 
+# Initialize scheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(func = periodic_task,trigger = 'interval',hours = 12)
+scheduler.add_job(func=periodic_task, trigger='interval', minutes=30)
 scheduler.start()
 
-# webbrowser.open('http://127.0.0.1:5000')
-
-# if __name__ == '__main__':
-#     #try:
-#         app.run()
-#     # except (KeyboardInterrupt, SystemExit):
-#     #     scheduler.shutdown()
+if __name__ == '__main__':
+    try:
+        webbrowser.open('http://127.0.0.1:5000')
+        app.run()
+    except (KeyboardInterrupt, SystemExit):
+        scheduler.shutdown()
